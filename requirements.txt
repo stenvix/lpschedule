@@ -1,6 +1,7 @@
 Flask==0.10.1
 Flask-Script==2.0.5
 grab==0.6.30
+gunicorn==19.5.0
 itsdangerous==0.24
 Jinja2==2.8
 lxml==3.6.0
