@@ -1,0 +1,17 @@
+sudo: required
+language: python
+python:
+  - '2.7'
+install:
+  - pip install -r requirements.txt
+script:
+  - py.test
+deploy:
+  provider: openshift
+  user: falken.ua@gmail.com
+  password:
+    secure: p27YyYzg6h9mtPmxRDgdLb14niTYErY1NnecaArfLFsIM06gncczNaGRZNbTWzTk5jm8pxAyuu9n2m4YG5h68BsSYR+JZe5BTSHubbfPE3/FJF4HpfBCuVMfbocYwYi0PFo/V6fk+i/3dagA8OLA4ny/uGUGjPFCUSB3MGJGBDZ4Rkv0Nprcjw+6HIlNjYpkwyhK4Tcfy6/O517kfEd4JWR9qcK6jERLVdI0C1+C+xoXYpafU56gOUEB5nhM4KGLquGvxkbDxe7lFfj8qXmBfUDam7P3wk79MrUu48tAyZMoLpoCmv0gPCfnA0rh8c8GlZdEJqeyk0UiD+bJcTICPfNnMRGDwEAj86L6CoO/oFNNCSXDoR76c1X4PznIXzIleuYP6VuJB8aR/pJdnD6vnMuNM/pPwPHcosHg5fR97ClmPpAth4mdf7XTqcYKzgqs/H4xepL2+IQCNLWdKRMiFPCZhG/b8O8CyPg67DtsBRuxwISqvkjvLCn0hv+dPxUcq8LkIJeidhseaESIrkafek1Qk29DLBgrSZfTLMchWToP3MzkbHy/WTOwVpZDZ1UgN2L6wbhjQp5ImlaiTrOQED04VzNUnTF30Z8bMuEJS7Flx2b86K6orW5TQIQUHzDA1d0D5B0j6d+If1Fw6CWpPZpju6ZM9JxT84cMWHOqg6g=
+  app: lpschedule
+  domain: '23454567'
+  on:
+    repo: stepanov-valentin/lpschedule
