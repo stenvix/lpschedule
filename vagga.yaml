@@ -1,0 +1,71 @@
+containers:
+  schedule:
+    setup:
+      - !Ubuntu trusty
+      - !Install [python,python-setuptools,libcurl4-openssl-dev,python-dev,build-essential,libxml2-dev,libxslt-dev,lib32z1-dev]
+      - !Sh 'python setup.py install'
+    environ:
+      DATABASE_URL: postgresql://vagga:vagga@127.0.0.1:5433/test
+      PYTHON_EGG_CACHE: /tmp
+  database:
+    setup:
+      - !Ubuntu trusty
+      - !Install [postgresql,postgresql-client]
+      - !EnsureDir /data
+    environ:
+      PG_PORT: 5433   # Port of host to use
+      PG_DB: test
+      PG_USER: vagga
+      PG_PASSWORD: vagga
+      PGDATA: /data
+      PG_BIN: /usr/lib/postgresql/9.3/bin
+    volumes:
+      /data: !Tmpfs
+        size: 100M
+        mode: 0o700
+commands:
+  redis-server: !Command
+    description: Run instance of Redis server
+    container: schedule
+    run: |
+        redis-server --daemonize no --port $REDIS_PORT --logfile "" --loglevel debug
+  test: !Supervise
+    description: Run app in debug mode
+    children:
+      service: !Command
+        container: schedule
+        run: |
+            touch /work/.dbcreation; # Create lock file
+            while [ -f /work/.dbcreation ]; do sleep 0.2; done # Acquire lock
+            python manage.py runserver;
+      db: !Command
+        container: database
+        run: |
+            chown postgres:postgres $PGDATA;
+            su postgres -c "$PG_BIN/pg_ctl initdb";
+            su postgres -c "echo 'host all all all trust' >> $PGDATA/pg_hba.conf";
+            su postgres -c "$PG_BIN/pg_ctl -w -o '-F --port=$PG_PORT -k /tmp' start";
+            su postgres -c "$PG_BIN/psql -h 127.0.0.1 -p $PG_PORT -c \"CREATE USER $PG_USER WITH PASSWORD '$PG_PASSWORD';\""
+            su postgres -c "$PG_BIN/createdb -h 127.0.0.1 -p $PG_PORT $PG_DB -O $PG_USER";
+            rm /work/.dbcreation # Release lock
+            sleep infinity
+  run: !Supervise
+    description: Run app
+    children:
+      service: !Command
+        container: schedule
+        run: |
+            touch /work/.dbcreation # Create lock file
+            while [ -f /work/.dbcreation ]; do sleep 0.2; done # Acquire lock
+            python manage.py gunicorn
+      db: !Command
+        container: database
+        run: |
+            chown postgres:postgres $PGDATA;
+            su postgres -c "$PG_BIN/pg_ctl initdb";
+            su postgres -c "echo 'host all all all trust' >> $PGDATA/pg_hba.conf"
+            su postgres -c "$PG_BIN/pg_ctl -w -o '-F --port=$PG_PORT -k /tmp' start";
+            su postgres -c "$PG_BIN/psql -h 127.0.0.1 -p $PG_PORT -c \"CREATE USER $PG_USER WITH PASSWORD '$PG_PASSWORD';\""
+            su postgres -c "$PG_BIN/createdb -h 127.0.0.1 -p $PG_PORT $PG_DB -O $PG_USER";
+            rm /work/.dbcreation # Release lock
+            sleep infinity
