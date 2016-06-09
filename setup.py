@@ -13,5 +13,6 @@ setup(name='LpSchedule',
   	'Flask-Migrate>=1.7.0',
   	'Flask-Script>=2.0.5',
   	'Flask-SQLAlchemy>=2.1',
-  	'gunicorn>=19.4.5'
+  	'gunicorn>=19.4.5',
+    'grab>=0.6.30'
 	],)
