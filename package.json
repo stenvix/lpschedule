@@ -1,0 +1,38 @@
+{
+  "name": "new-lpschedule",
+  "version": "0.1.0",
+  "description": "New schedule for Lviv Polytechnic University",
+  "main": "webpack.config.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stepanov-valentin/lpschedule.git"
+  },
+  "keywords": [
+    "Lp",
+    "Schedule"
+  ],
+  "author": "Stepanov Valentyn",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/stepanov-valentin/lpschedule/issues"
+  },
+  "homepage": "https://github.com/stepanov-valentin/lpschedule#readme",
+  "devDependencies": {
+    "babel-core": "^6.9.1",
+    "babel-loader": "^6.2.4",
+    "babel-preset-es2015": "^6.9.0",
+    "css-loader": "^0.23.1",
+    "extract-text-webpack-plugin": "^1.0.1",
+    "html-webpack-plugin": "^2.19.0",
+    "node-sass": "^3.7.0",
+    "sass-loader": "^3.2.0",
+    "style-loader": "^0.13.1",
+    "webpack": "^1.13.1"
+  }
+}
