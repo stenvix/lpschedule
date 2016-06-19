@@ -22,7 +22,7 @@ try:
     if(sys.version_info[0] < 3):
         execfile(virtualenv, dict(__file__=virtualenv))
     else:
-        open(virtualenv).read(), dict(__file__=virtualenv)
+        exec(open(virtualenv).read(), dict(__file__=virtualenv))
 except IOError:
     pass
 
