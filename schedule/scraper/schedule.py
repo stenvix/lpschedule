@@ -29,7 +29,11 @@ def parseSubjectTable(html):
                 oneSubject.append({'name': name, 'teacher':teacher, 'room':room})
         subjects["week{}".format(week)] = oneSubject
     return subjects
+
 class ScheduleParser(Spider):
+    """ Site scraper for checking changes in base site. """
+
+
     BASE ='http://lp.edu.ua/node/40'
     initial_urls=[BASE]
 
@@ -38,12 +42,15 @@ class ScheduleParser(Spider):
     def shutdown(self):
         super(ScheduleParser, self).shutdown()
 
+    @classmethod
     def task_initial(self, grab, task):
         for inst in grab.doc.select('//select[@name="inst"]/option'):
             if not inst.text():continue
             inst_name,inst_attr = inst.text(), inst.attr('value')
             yield Task('institute',inst_name=inst_name,inst_attr=inst_attr,
                     url="{}?inst={}&group=&semestr=1&semest_part=1".format(ScheduleParser.BASE,inst_attr))
+
+    @classmethod
     def task_institute(self, grab, task):
         logging.info('Fetching institute {}'.format(task.inst_name.encode('utf-8')))
         for group in grab.doc.select('//select[@name="group"]/option'):
@@ -52,6 +59,7 @@ class ScheduleParser(Spider):
             yield Task('group',inst_name=task.inst_name,inst_attr=task.inst_attr, group_name=group_name,group_attr = group_attr,
                     url='{}?inst={}&group={}&semestr=1&semest_part=1'.format(ScheduleParser.BASE,task.inst_attr,group_attr))
 
+    @classmethod
     def task_group(self, grab, task):
         logging.info('{} in {}'.format(task.group_name.encode('utf-8'),task.inst_name.encode('utf-8')))
         semestr = grab.doc.select('//select[@name="semestr"]/option[@selected]/@value')
@@ -64,6 +72,7 @@ class ScheduleParser(Spider):
                             url='{}?inst={}&group={}&semestr={}&semest_part={}'.format(ScheduleParser.BASE,
                                 task.inst_attr,task.group_attr,sem.text(),part.text()))
 
+    @classmethod
     def task_parse(self,grab,task):
         logging.info(u'Parse semestr {}, institute {}, group {} url {}'.format(task.semestr,task.inst_name,task.group_name,task.url))
         schedule = {}
@@ -73,18 +82,15 @@ class ScheduleParser(Spider):
                 continue
             if tr.select('./td').count() == 1:
                 dayweek = WEEKDAYS[tr.select('./td')[0].text()]
-                print tr.select('./td')[0].text()
                 continue
             if tr.select('./td').count() == 2:
                 number = tr.select('./td')[0].text()
                 html = tr.select('./td')[1]
             if tr.select('./td').count() == 3:
                 dayweek = WEEKDAYS[tr.select('./td')[0].text()]
-                print tr.select('./td')[0].text()
                 number = tr.select('./td')[1].text()
                 html = tr.select('./td')[2]
 
-            print dayweek
             schedule[dayweek] = schedule.get(dayweek, {})
             schedule[dayweek][number] = parseSubjectTable(html)
         if schedule:
