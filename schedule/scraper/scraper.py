@@ -70,17 +70,18 @@ class ScheduleParser(Spider):
                                                  day_key, subgroup['room'].split(',')[1],
                                                  index if len(week) > 1 else None,
                                                  subgroup['room'].split(',')[0], u's',
+                                                 task.semestr,
                                                  Group.get_by_full_name(task.group_name))
 
     @classmethod
     def save_lesson_obj(self, lesson_name, lesson_number, lesson_week, day_number, lesson_type, subgroup, room,
-                        day_name, Group):
+                        day_name, semester, Group):
         if Lesson.get_by_attrs(lesson_name, lesson_number, lesson_week, day_number):
             return
         else:
             Lesson.add(Lesson(lesson_name=lesson_name, lesson_number=lesson_number, lesson_week=lesson_week,
                               day_number=day_number, lesson_type=lesson_type, subgroup=subgroup, room=room,
-                              day_name=day_name, group=Group))
+                              day_name=day_name, semester_part = semester, group=Group))
 
     @classmethod
     def task_initial(self, grab, task):

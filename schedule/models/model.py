@@ -18,6 +18,7 @@ class Lesson(Base, db.Model):
     lesson_week = db.Column(db.Integer, default=-1)
     subgroup = db.Column(db.Integer,default=-1)
     room = db.Column(db.Unicode)
+    semester_part = db.Column(db.Integer)
 
     day_number = db.Column(db.Integer)
     day_name = db.Column(db.Unicode)
@@ -81,7 +82,7 @@ class Teacher(Base, db.Model):
     teacher_id = db.Column(db.Integer, primary_key=True)
     teacher_name = db.Column(db.String, unique=True)
     active = db.Column(db.Binary,default=True)
-    lessons = db.relationship('Lesson', secondary='lessonteacher',backref="teachers")
+    lessons = db.relationship('Lesson', secondary='lesson_teacher',backref="teachers")
 
 class LessonTeacher(Base, db.Model):
     lessonteacher_id = db.Column(db.Integer, primary_key=True)

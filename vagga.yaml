@@ -61,6 +61,7 @@ commands:
         run: |
             touch /work/.dbcreation # Create lock file
             while [ -f /work/.dbcreation ]; do sleep 0.2; done # Acquire lock
+            python manage.py db upgrade
             python manage.py gunicorn
       db: !Command
         container: database

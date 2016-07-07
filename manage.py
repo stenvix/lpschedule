@@ -43,12 +43,8 @@ def initdb():
 def parse():
     logging.basicConfig(level=logging.INFO)
     initdb()
-    for i in Institute.query.all():
-        print i.institute_abbr.encode('utf8')
-    #parser = scraper.ScheduleParser(thread_number=multiprocessing.cpu_count())
-   # parser.run()
-
-
+    parser = scraper.ScheduleParser(thread_number=multiprocessing.cpu_count())
+    parser.run()
 
 if __name__ == '__main__':
     manager.run()
