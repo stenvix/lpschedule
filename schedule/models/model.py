@@ -58,8 +58,9 @@ class Group(Base, db.Model):
     group_id = db.Column(db.Integer, primary_key=True)
     group_full_name = db.Column(db.String)
     group_url = db.Column(db.String)
-
+    institute_id = db.Column(db.Integer, db.ForeignKey('institute.institute_id'))
     active = db.Column(db.Boolean, default=True)
+    institute = db.relationship('Institute')
 
     @staticmethod
     def get_by_full_name(group_full_name):

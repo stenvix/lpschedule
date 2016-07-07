@@ -52,11 +52,11 @@ class ScheduleParser(Spider):
             Institute.add(Institute(institute_abbr=inst_name))
 
     @classmethod
-    def save_group(self, group_full_name, group_url):
+    def save_group(self, group_full_name, group_url, institute):
         if Group.get_by_full_name(group_full_name):
             return
         else:
-            Group.add(Group(group_full_name=group_full_name, group_url=group_url))
+            Group.add(Group(group_full_name=group_full_name, group_url=group_url, institute = institute))
 
     @classmethod
     def save_lesson(self, schedule, task):
@@ -120,7 +120,7 @@ class ScheduleParser(Spider):
     @classmethod
     def task_group(self, grab, task):
         logging.debug(u'{} in {}'.format(task.group_name, task.inst_name))
-        self.save_group(task.group_name, task.url)
+        self.save_group(task.group_name, task.url, Institute.get_by_attr(task.inst_name))
         semestr = grab.doc.select('//select[@name="semestr"]/option[@selected]/@value')
         semestr_part = grab.doc.select('//select[@name="semest_part"]/option[@selected]/@value')
         if (len(semestr) > 0 and len(semestr_part) > 0):
