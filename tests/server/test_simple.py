@@ -1,4 +1,3 @@
-from schedule.scraper import *
 def simple_test():
     return 1
 
