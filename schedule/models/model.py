@@ -23,7 +23,6 @@ class Lesson(Base, db.Model):
     day_number = db.Column(db.Integer)
     day_name = db.Column(db.Unicode)
 
-    teacher_id = db.Column(db.Integer, db.ForeignKey('teacher.teacher_id'))
     group_id = db.Column(db.Integer, db.ForeignKey('group.group_id'))
     time_id = db.Column(db.Integer, db.ForeignKey('time.time_id'))
 
@@ -80,9 +79,19 @@ class Time(Base, db.Model):
 
 class Teacher(Base, db.Model):
     teacher_id = db.Column(db.Integer, primary_key=True)
-    teacher_name = db.Column(db.String, unique=True)
-    active = db.Column(db.Binary,default=True)
+    teacher_name = db.Column(db.Unicode, unique=True)
+    active = db.Column(db.Boolean,default=True)
     lessons = db.relationship('Lesson', secondary='lesson_teacher',backref="teachers")
+
+    @staticmethod
+    def get_by_name(teacher_name):
+        return Teacher.query.filter_by(teacher_name = teacher_name).first()
+
+    @staticmethod
+    def add(Teacher):
+        db.session.add(Teacher)
+        db.session.commit()
+        return Teacher
 
 class LessonTeacher(Base, db.Model):
     lessonteacher_id = db.Column(db.Integer, primary_key=True)

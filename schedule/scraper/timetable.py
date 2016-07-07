@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
 from grab.spider import Spider, Task
-from schedule import db
 from schedule.models import Institute, Group, Teacher, Lesson
 
 WEEKDAYS = {
@@ -65,23 +64,36 @@ class ScheduleParser(Spider):
                 for week_key, week in lesson.iteritems():
                     for index, subgroup in enumerate(week):
                         if len(subgroup) > 0:
+                            teacher = self.save_teacher(subgroup['teacher'])
+
                             self.save_lesson_obj(subgroup['name'],
                                                  lesson_key, week_key if len(lesson) > 1 else None,
                                                  day_key, subgroup['room'].split(',')[1],
                                                  index if len(week) > 1 else None,
                                                  subgroup['room'].split(',')[0], u's',
                                                  task.semestr,
-                                                 Group.get_by_full_name(task.group_name))
+                                                 Group.get_by_full_name(task.group_name), teacher)
+
+
+    @classmethod
+    def save_teacher(self,teacher_name):
+        teacher = Teacher.get_by_name(teacher_name)
+        if teacher:
+            return teacher
+        else:
+            return Teacher.add(Teacher(teacher_name=teacher_name))
 
     @classmethod
     def save_lesson_obj(self, lesson_name, lesson_number, lesson_week, day_number, lesson_type, subgroup, room,
-                        day_name, semester, Group):
+                        day_name, semester, Group, teacher):
         if Lesson.get_by_attrs(lesson_name, lesson_number, lesson_week, day_number):
             return
         else:
-            Lesson.add(Lesson(lesson_name=lesson_name, lesson_number=lesson_number, lesson_week=lesson_week,
+            lesson = Lesson(lesson_name=lesson_name, lesson_number=lesson_number, lesson_week=lesson_week,
                               day_number=day_number, lesson_type=lesson_type, subgroup=subgroup, room=room,
-                              day_name=day_name, semester_part = semester, group=Group))
+                              day_name=day_name, semester_part = semester, group=Group)
+            lesson.teachers.append(teacher)
+            Lesson.add(lesson)
 
     @classmethod
     def task_initial(self, grab, task):
