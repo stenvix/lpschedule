@@ -6,7 +6,14 @@ setup(name='LpSchedule',
       author='Stepanov Valentyn',
       author_email='mr.valentyn.stepanov@gmail.com',
       url='http://example.com',
-      install_requires=['alembic>=0.8.4', 'Flask>=0.10.1', 'SQLAlchemy>=1.0.9',
-                        'Flask-Migrate>=1.7.0', 'Flask-Script>=2.0.5',
-                        'Flask-SQLAlchemy>=2.1', 'gunicorn>=19.4.5',
-                        'grab>=0.6.30', 'celery>=3.1.23', 'psycopg2'],)
+      install_requires=[
+        'alembic>=0.8.4',
+        'Flask>=0.10.1',
+        'SQLAlchemy>=1.0.9',
+        'Flask-Migrate>=1.7.0',
+        'Flask-Script>=2.0.5',
+        'Flask-SQLAlchemy>=2.1',
+        'gunicorn>=19.4.5',
+        'grab>=0.6.30',
+        'psycopg2'
+        ],)

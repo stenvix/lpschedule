@@ -1,9 +1,13 @@
+# -*- coding: utf-8 -*-
 """Flask Script configuration."""
-
+import logging
+import multiprocessing
 from flask_script import Manager, Server
+from flask_migrate import MigrateCommand
 from schedule import app, db, manager
 from schedule.models import model
-from flask_migrate import MigrateCommand
+from schedule.scraper import scraper
+from schedule.models import Institute
 
 @manager.option('-h', '--host', dest='host', default='0.0.0.0')
 @manager.option('-p', '--port', dest='port', type=int, default=5000)
@@ -34,9 +38,17 @@ manager.add_command('db', MigrateCommand)
 @manager.command
 def initdb():
     db.create_all()
-    db.session.add(model.Teacher())
-    db.session.add(model.Group())
-    db.session.add(model.Lesson(teacher_id="1"))
+
+@manager.command
+def parse():
+    logging.basicConfig(level=logging.INFO)
+    initdb()
+    for i in Institute.query.all():
+        print i.institute_abbr.encode('utf8')
+    #parser = scraper.ScheduleParser(thread_number=multiprocessing.cpu_count())
+   # parser.run()
+
+
 
 if __name__ == '__main__':
     manager.run()
