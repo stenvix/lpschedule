@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import logging
 from grab.spider import Spider, Task
-from schedule.models import Institute, Group, Teacher, Lesson
+from schedule.models import Institute, Group, Teacher, Lesson, Time
+
 
 WEEKDAYS = {
     u"Пн": "1",
@@ -89,9 +90,10 @@ class ScheduleParser(Spider):
         if Lesson.get_by_attrs(lesson_name, lesson_number, lesson_week, day_number):
             return
         else:
+            time = Time.get_by_number(lesson_number)
             lesson = Lesson(lesson_name=lesson_name, lesson_number=lesson_number, lesson_week=lesson_week,
                               day_number=day_number, lesson_type=lesson_type, subgroup=subgroup, room=room,
-                              day_name=day_name, semester_part = semester, group=Group)
+                              day_name=day_name, semester_part = semester, group=Group, time = time )
             lesson.teachers.append(teacher)
             Lesson.add(lesson)
 
@@ -125,12 +127,11 @@ class ScheduleParser(Spider):
             for sem in semestr:
                 for part in semestr_part:
                     yield Task('parse', inst_name=task.inst_name,
-                               inst_attr=task.inst_attr, group_name=task.group_name, group_attr=task.group_attr,
-                               semestr=sem.text(), semestr_part=part.text(),
-                               url='{}?inst={}&group={}&semestr={}&semest_part={}'.format(ScheduleParser.BASE,
-                                                                                          task.inst_attr,
-                                                                                          task.group_attr, sem.text(),
-                                                                                          part.text()))
+                        inst_attr=task.inst_attr, group_name=task.group_name, group_attr=task.group_attr,
+                        semestr=sem.text(), semestr_part=part.text(),
+                        url='{}?inst={}&group={}&semestr={}&semest_part={}'.format(ScheduleParser.BASE, task.inst_attr,
+                                                                                  task.group_attr, sem.text(),
+                                                                                  part.text()))
 
     @classmethod
     def task_parse(self, grab, task):

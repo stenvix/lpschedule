@@ -77,6 +77,15 @@ class Time(Base, db.Model):
     time_start = db.Column(db.Time)
     time_end = db.Column(db.Time)
 
+    @staticmethod
+    def get_by_number(time_number):
+        return Time.query.filter_by(time_number=time_number).first()
+    @staticmethod
+    def add(time):
+        if time.time_id is None:
+            db.session.add(time)
+        db.session.commit()
+
 class Teacher(Base, db.Model):
     teacher_id = db.Column(db.Integer, primary_key=True)
     teacher_name = db.Column(db.Unicode, unique=True)

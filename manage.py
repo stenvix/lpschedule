@@ -5,7 +5,7 @@ import multiprocessing
 from flask_script import Server
 from flask_migrate import MigrateCommand
 from schedule import app, db, manager
-from schedule.scraper import timetable
+from schedule.scraper import ScheduleParser, TimeParser
 from schedule.models import Institute, Lesson
 
 @manager.option('-h', '--host', dest='host', default='0.0.0.0')
@@ -42,8 +42,9 @@ def initdb():
 def parse():
     logging.basicConfig(level=logging.INFO)
     initdb()
-
-    parser = timetable.ScheduleParser(thread_number=multiprocessing.cpu_count())
+    time_parser = TimeParser(thread_number=multiprocessing.cpu_count())
+    time_parser.run()
+    parser = ScheduleParser(thread_number=multiprocessing.cpu_count())
     parser.run()
 
 if __name__ == '__main__':
