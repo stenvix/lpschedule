@@ -4,9 +4,9 @@ import logging
 import multiprocessing
 from flask_script import Server
 from flask_migrate import MigrateCommand
-from schedule import app, db, manager
+from schedule import app, db, manager, celery
 from schedule.scraper import ScheduleParser, TimeParser
-from schedule.models import Institute, Lesson
+
 
 @manager.option('-h', '--host', dest='host', default='0.0.0.0')
 @manager.option('-p', '--port', dest='port', type=int, default=5000)
@@ -38,14 +38,45 @@ manager.add_command('db', MigrateCommand)
 def initdb():
     db.create_all()
 
-@manager.command
+@celery.task
 def parse():
-    logging.basicConfig(level=logging.INFO)
-    initdb()
     time_parser = TimeParser(thread_number=multiprocessing.cpu_count())
     time_parser.run()
     parser = ScheduleParser(thread_number=multiprocessing.cpu_count())
     parser.run()
 
+
+class WorkerProcess(multiprocessing.Process):
+    def __init__(self):
+        super(WorkerProcess,self).__init__(name='celery_worker_process')
+
+    def run(self):
+        argv = [
+            'worker',
+            '--loglevel=INFO',
+            '--hostname=local',
+            '-Ofair',
+            '-B'
+        ]
+
+        celery.worker_main(argv)
+
+def start_celery():
+    global worker_process# 'spawn' seems to work also
+    worker_process = WorkerProcess()
+    worker_process.start()
+
+def stop_celery():
+    global worker_process
+    if worker_process:
+        worker_process.terminate()
+        worker_process = None
+
+@app.before_first_request
+def before_first_request():
+    start_celery()
+
 if __name__ == '__main__':
     manager.run()
+
+

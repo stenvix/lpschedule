@@ -66,3 +66,5 @@ target/
 
 node_modules
 .idea/
+.db
+celerybeat-schedule

@@ -11,7 +11,6 @@
 import imp
 import os
 import sys
-from manage import parse
 
 try:
     virtenv = os.path.\
@@ -37,7 +36,7 @@ except IOError:
 #  main():
 #
 if __name__ == '__main__':
-    parse()
+
     application = imp.load_source('app', 'manage.py')
     port = application.app.config['PORT']
     ip = application.app.config['IP']
