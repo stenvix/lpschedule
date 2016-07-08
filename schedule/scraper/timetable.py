@@ -26,7 +26,11 @@ def parseSubjectTable(html):
             else:
                 name = div.select('./b').text()
                 teacher = div.select('./i').text()
-                room = div.select('./br/following-sibling::text()')[1].text()
+                room = div.select('./br/following-sibling::text()')
+                if len(room) > 1:
+                    room = room[1].text()
+                else:
+                    room = room[0].text()
                 oneSubject.append({'name': name, 'teacher': teacher, 'room': room})
         subjects["{}".format(week)] = oneSubject
     return subjects

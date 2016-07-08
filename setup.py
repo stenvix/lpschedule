@@ -15,5 +15,5 @@ setup(name='LpSchedule',
         'Flask-SQLAlchemy>=2.1',
         'gunicorn>=19.4.5',
         'grab>=0.6.30',
-        'psycopg2'
+        'psycopg2>=2.5.1'
         ],)
