@@ -1,48 +1,109 @@
 # -*- coding: utf-8 -*-
-#!/usr/bin/env python
-
-"""Main app module, entry point for openshift."""
-
-# This file may be used instead of Apache mod_wsgi to run your python
-# web application in a different framework.  A few examples are
-# provided (cherrypi, gevent), but this file may be altered to run
-# whatever framework is desired - or a completely customized service.
-#
+"""Flask Script configuration."""
 import imp
 import os
 import sys
+import multiprocessing
+from flask_script import Server
+from flask_migrate import MigrateCommand
+from schedule import app, db, manager, celery
+from schedule.scraper import ScheduleParser, TimeParser
 
-try:
-    virtenv = os.path.\
-        join(os.environ.get('OPENSHIFT_PYTHON_DIR', '.'), 'virtenv')
-    python_version = "python"+str(sys.version_info[0]) + \
-        "."+str(sys.version_info[1])
-    os.environ['PYTHON_EGG_CACHE'] = os.path.join(
-        virtenv, 'lib', python_version, 'site-packages')
-    virtualenv = os.path.join(virtenv, 'bin', 'activate_this.py')
-    if(sys.version_info[0] < 3):
-        execfile(virtualenv, dict(__file__=virtualenv))
-    else:
-        exec(open(virtualenv).read(), dict(__file__=virtualenv))
-except IOError:
-    pass
+@manager.option('-h', '--host', dest='host', default='0.0.0.0')
+@manager.option('-p', '--port', dest='port', type=int, default=5000)
+@manager.option('-w', '--workers', dest='workers', type=int, default=4)
+def gunicorn(host, port, workers):
+    """Start the Server with Gunicorn."""
+    from gunicorn.app.base import Application
 
-#
-# IMPORTANT: Put any additional includes below this line.  If placed above this
-# line, it's possible required libraries won't be in your searchable path
-#
+    class FlaskApplication(Application):
 
-#
-#  main():
-#
-if __name__ == '__main__':
-    from manage import dropdb, initdb
+        @classmethod
+        def init(self, parser, opts, args):
+            return {
+                'bind': '{0}:{1}'.format(host, port),
+                'workers': workers
+                }
+
+        @classmethod
+        def load(self):
+            return app
+    application = FlaskApplication()
+    return application.run()
+@manager.command
+def runserver():
+    start_celery()
+    app.run()
+
+manager.add_command('db', MigrateCommand)
+@manager.command
+def initdb():
+    db.create_all()
+@manager.command
+def dropdb():
+    db.drop_all(bind=None)
+
+@celery.task
+def parse():
     dropdb()
     initdb()
-    application = imp.load_source('app', 'manage.py')
-    port = application.app.config['PORT']
-    ip = application.app.config['IP']
+    time_parser = TimeParser(thread_number=multiprocessing.cpu_count())
+    time_parser.run()
+    parser = ScheduleParser(thread_number=multiprocessing.cpu_count())
+    parser.run()
+
+
+class WorkerProcess(multiprocessing.Process):
+    def __init__(self):
+        super(WorkerProcess,self).__init__(name='celery_worker_process')
+
+    def run(self):
+        argv = [
+            'worker',
+            '--loglevel=INFO',
+            '--hostname=local',
+            '-Ofair',
+            '-B'
+        ]
+
+        celery.worker_main(argv)
+
+app.worker_process = None
+
+def start_celery():
+    if app.worker_process is None:
+        app.worker_process = WorkerProcess()
+        app.worker_process.start()
+
+def stop_celery():
+    if app.worker_process:
+        app.worker_process.terminate()
+        app.worker_process = None
+
+@manager.command
+def server():
     try:
-        application.gunicorn(ip, port, workers=2)
+        virtenv = os.path. \
+            join(os.environ.get('OPENSHIFT_PYTHON_DIR', '.'), 'virtenv')
+        python_version = "python" + str(sys.version_info[0]) + \
+                         "." + str(sys.version_info[1])
+        os.environ['PYTHON_EGG_CACHE'] = os.path.join(
+            virtenv, 'lib', python_version, 'site-packages')
+        virtualenv = os.path.join(virtenv, 'bin', 'activate_this.py')
+        if (sys.version_info[0] < 3):
+            execfile(virtualenv, dict(__file__=virtualenv))
+        else:
+            exec (open(virtualenv).read(), dict(__file__=virtualenv))
+    except IOError:
+        pass
+    port = app.config['PORT']
+    ip = app.config['IP']
+    try:
+        start_celery()
+        gunicorn(ip, port, workers=2)
     except ImportError:
         pass
+
+
+if __name__ == '__main__':
+    manager.run()
