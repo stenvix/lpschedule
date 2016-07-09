@@ -2,7 +2,7 @@
 
 
 import logging
-from sqlalchemy import and_, not_
+from sqlalchemy import and_
 from grab.spider import Spider, Task
 from schedule.models import Institute, Group, Teacher, Lesson, Time
 
@@ -48,7 +48,7 @@ class ScheduleParser(Spider):
         for day_key, day in schedule.iteritems():
             for lesson_key, lesson in day.iteritems():
                 for week_key, week in lesson.iteritems():
-                    for index, subgroup in enumerate(week):
+                    for subgroup in week.iteritems():
                         if len(subgroup) > 0:
                             teacher = self.save_teacher(subgroup['teacher'])
                             id = self.save_or_update_lesson(
@@ -115,13 +115,13 @@ class ScheduleParser(Spider):
     def parseSubjectTable(self,html):
         subjects = {}
         for week, tr in enumerate(html.select('./table/tr')):
-            oneSubject = []
+            one_subject = []
             lesson = tr.select('./td')
             for subgroupid, subgroup in enumerate(lesson):
                 subject = None
                 div = subgroup.select('./div')
                 if div.count() == 0:
-                    oneSubject.append({})
+                    one_subject.append({})
                 else:
                     name = div.select('./b').text()
                     teacher = div.select('./i').text()
@@ -136,8 +136,8 @@ class ScheduleParser(Spider):
                         subject['subgroup'] = subgroupid
                     else:
                         subject['subgroup'] = -1
-                    oneSubject.append(subject)
-            subjects["{}".format(week)] = oneSubject
+                    one_subject.append(subject)
+            subjects["{}".format(week)] = one_subject
         return subjects
     @classmethod
     def task_initial(self, grab, task):

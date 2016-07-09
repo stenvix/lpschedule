@@ -32,7 +32,7 @@ commands:
         run: |
             touch /work/.dbcreation; # Create lock file
             while [ -f /work/.dbcreation ]; do sleep 0.2; done # Acquire lock
-            python app.py runserver
+            python app.py
       db: !Command
         container: database
         run: |

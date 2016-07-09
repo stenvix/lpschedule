@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """Flask Script configuration."""
-import imp
 import os
 import sys
 import multiprocessing
-from flask_script import Server
+import atexit
+from threading import Thread
 from flask_migrate import MigrateCommand
 from schedule import app, db, manager, celery
 from schedule.scraper import ScheduleParser, TimeParser
@@ -56,6 +56,7 @@ def parse():
 class WorkerProcess(multiprocessing.Process):
     def __init__(self):
         super(WorkerProcess,self).__init__(name='celery_worker_process')
+        # Thread.__init__(self)
 
     def run(self):
         argv = [
@@ -73,12 +74,16 @@ app.worker_process = None
 def start_celery():
     if app.worker_process is None:
         app.worker_process = WorkerProcess()
+        app.worker_process.daemon = True
         app.worker_process.start()
 
 def stop_celery():
     if app.worker_process:
         app.worker_process.terminate()
         app.worker_process = None
+
+atexit.register(stop_celery)
+
 
 @manager.command
 def server():
@@ -97,13 +102,13 @@ def server():
     except IOError:
         pass
     port = app.config['PORT']
-    ip = app.config['IP']
+    server_ip = app.config['IP']
     try:
         start_celery()
-        gunicorn(ip, port, workers=2)
+        gunicorn(server_ip, port, workers=2)
     except ImportError:
         pass
 
 
 if __name__ == '__main__':
-    manager.run()
+    server()

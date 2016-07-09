@@ -39,8 +39,8 @@ class Lesson(Base, db.Model):
                                       group=Group.get_by_full_name(kwargs.get('group'))).first()
 
     @staticmethod
-    def add(Lesson):
-        db.session.add(Lesson)
+    def add(lesson):
+        db.session.add(lesson)
         db.session.commit()
 
     @staticmethod
