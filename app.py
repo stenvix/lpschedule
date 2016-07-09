@@ -36,11 +36,13 @@ except IOError:
 #  main():
 #
 if __name__ == '__main__':
-
+    from manage import dropdb, initdb
+    dropdb()
+    initdb()
     application = imp.load_source('app', 'manage.py')
     port = application.app.config['PORT']
     ip = application.app.config['IP']
     try:
-        application.gunicorn(ip, port, workers=1)
+        application.gunicorn(ip, port, workers=2)
     except ImportError:
         pass

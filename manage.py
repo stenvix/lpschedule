@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
 """Flask Script configuration."""
-import logging
 import multiprocessing
 from flask_script import Server
 from flask_migrate import MigrateCommand
 from schedule import app, db, manager, celery
 from schedule.scraper import ScheduleParser, TimeParser
-
 
 @manager.option('-h', '--host', dest='host', default='0.0.0.0')
 @manager.option('-p', '--port', dest='port', type=int, default=5000)
@@ -37,6 +35,9 @@ manager.add_command('db', MigrateCommand)
 @manager.command
 def initdb():
     db.create_all()
+@manager.command
+def dropdb():
+    db.drop_all(bind=None)
 
 @celery.task
 def parse():
@@ -60,6 +61,8 @@ class WorkerProcess(multiprocessing.Process):
         ]
 
         celery.worker_main(argv)
+
+worker_process = None
 
 def start_celery():
     global worker_process# 'spawn' seems to work also
