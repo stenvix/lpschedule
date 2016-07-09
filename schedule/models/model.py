@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """App models."""
+from schedule import db
 from sqlalchemy.ext.declarative import declared_attr
 
-from schedule import db
 
 
 class Base(object):

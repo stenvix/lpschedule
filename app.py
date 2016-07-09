@@ -4,7 +4,6 @@ import os
 import sys
 import multiprocessing
 import atexit
-from threading import Thread
 from flask_migrate import MigrateCommand
 from schedule import app, db, manager, celery
 from schedule.scraper import ScheduleParser, TimeParser

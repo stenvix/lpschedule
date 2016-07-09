@@ -48,7 +48,7 @@ class ScheduleParser(Spider):
         for day_key, day in schedule.iteritems():
             for lesson_key, lesson in day.iteritems():
                 for week_key, week in lesson.iteritems():
-                    for subgroup in week.iteritems():
+                    for subgroup in week:
                         if len(subgroup) > 0:
                             teacher = self.save_teacher(subgroup['teacher'])
                             id = self.save_or_update_lesson(
