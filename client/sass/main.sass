@@ -3,6 +3,10 @@
   top: 50%
   left: 50%
   transform: translate(-50%, -50%)
+.header-title
+  a
+    color: #fff!important
+    text-decoration: none
 
 .search-section
   padding: 10px 40px
@@ -17,3 +21,59 @@
 .search-card
  	margin: 0 auto
  	min-height: 153px!important
+
+.subgroup
+  //position: absolute
+  //top: 0
+  //left: 0
+  font-size: 12px
+  margin-top: -1px
+  margin-right: -1px
+
+.subgroup--color
+    padding: 0.2em 1em
+    //border-radius: 0.25em
+  
+.subgroup--one
+  @extend .subgroup--color
+  //background-color: rgb(255, 87, 34)
+  //background-color: rgb(195,144,212)
+  //background-color: #B53F51
+  //background-color: #3FB5B5
+  background-color: #00BCD4
+  color: #fff
+
+.subgroup--two
+  @extend .subgroup--color
+  //background-color: rgb(205, 220, 57)
+  background-color: rgb(76, 175, 80)
+  color: #fff
+.lesson-header
+  border-bottom: 1px solid rgba(0,0,0,.1)
+  text-align: center
+  font-weight: bold
+.lesson
+  position: relative
+  ul
+    padding: 2px 0
+    margin-bottom: 0!important
+    margin-top: 0em!important
+    margin-left: 0.3em!important
+  ul li
+    padding: 0.3em
+    margin: 0
+    font-size: 12px
+    min-height: 20px!important
+    i
+      font-size: 18px!important
+      margin-right: 2px!important
+  ul li:first-child
+    font-size: 14px!important
+.brd
+  .lesson
+    @media screen and (max-width: 840px)
+      border-bottom: 1px solid rgba(0,0,0,.1)
+    @media screen and (min-width: 840px)
+      border-left: 1px solid rgba(0,0,0,.1)
+  div:last-child
+    border-bottom: none

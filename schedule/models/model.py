@@ -29,7 +29,7 @@ class Lesson(Base, db.Model):
     time_id = db.Column(db.Integer, db.ForeignKey('time.time_id'))
 
     time = db.relationship('Time')
-    group = db.relationship('Group')
+    group = db.relationship('Group', backref='lessons')
 
     @staticmethod
     def get_by_attrs(**kwargs):

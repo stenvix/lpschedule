@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% block content %}
+{% import 'timetable_macros.html' as temp %}
+
+    <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
+  <div class="mdl-tabs__tab-bar">
+      <a href="#week-one" class="mdl-tabs__tab is-active">Перший тиждень</a>
+      <a href="#week-two" class="mdl-tabs__tab">Другий тиждень</a>
+  </div>
+
+  <div class="mdl-tabs__panel is-active" id="week-one" >
+    {{  temp.week(lessons[0],0,day_to_string)  }}
+  </div>
+  <div class="mdl-tabs__panel" id="week-two">
+  {{  temp.week(lessons[1],1,day_to_string)  }}
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{#        <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">#}
+{#  <thead>#}
+{#    <tr>#}
+{#      <th class="mdl-data-table__cell--non-numeric"></th>#}
+{#      <th class="mdl-data-table__cell--non-numeric">Пара</th>#}
+{#      <th class="mdl-data-table__cell--non-numeric">Перша підгрупа</th>#}
+{#      <th class="mdl-data-table__cell--non-numeric">Друга підгрупа</th>#}
+{#    </tr>#}
+{#  </thead>#}
+{#  <tbody>#}
+{#    <tr>#}
+{#        <td rowspan="3">Пн</td>#}
+{#        <td>1</td>#}
+{#        <td>#}
+{#            <table>#}
+{#            <tbody>#}
+{#            <tr>#}
+{#                <td>#}
+{#                Природознавство#}
+{#                </td> <td>#}
+{#                Природознавство#}
+{#                </td>#}
+{#            </tr>#}
+{#            <tr>#}
+{#                <td colspan="2">#}
+{#                Українська мова#}
+{#                </td>#}
+{#            </tr>#}
+{#            </tbody>#}
+{#            </table>#}
+{#        </td>#}
+{#    </tr>#}
+{#  <tr>#}
+{#      <td>2</td>#}
+{#      <td><table>#}
+{#            <tbody>#}
+{#            <tr>#}
+{#                <td class="mdl-data-table__cell--non-numeric">Математика</td>#}
+{#            </tr>#}
+{#            </tbody>#}
+{#          </table></td>#}
+{#  </tr>#}
+{#  <tr>#}
+{#      <td>3</td>#}
+{#      <td><table>#}
+{#            <tbody>#}
+{#            <tr>#}
+{#                <td class="mdl-data-table__cell--non-numeric">Математика</td>#}
+{#            </tr>#}
+{#            </tbody>#}
+{#          </table></td>#}
+{#  </tr>#}
+{#  </tbody>#}
+{#</table>#}
+        </div>
+{% endblock %}

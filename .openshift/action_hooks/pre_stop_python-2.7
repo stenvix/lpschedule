@@ -1,0 +1,5 @@
+#!/bin/bash
+source $OPENSHIFT_PYTHON_DIR'virtenv/bin/activate';
+cd $OPENSHIFT_REPO_DIR;
+celery multi stopwait worker1
+echo "Celery successfully stopped"

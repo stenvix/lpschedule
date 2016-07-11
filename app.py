@@ -3,9 +3,8 @@
 import os
 import sys
 import multiprocessing
-import atexit
 from flask_migrate import MigrateCommand
-from schedule import app, db, manager, celery
+from schedule import app, db, manager
 from schedule.scraper import ScheduleParser, TimeParser
 
 @manager.option('-h', '--host', dest='host', default='0.0.0.0')
@@ -31,8 +30,7 @@ def gunicorn(host, port, workers):
     return application.run()
 @manager.command
 def runserver():
-    start_celery()
-    app.run()
+    app.run(host="0.0.0.0")
 
 manager.add_command('db', MigrateCommand)
 @manager.command
@@ -42,7 +40,7 @@ def initdb():
 def dropdb():
     db.drop_all(bind=None)
 
-@celery.task
+@manager.command
 def parse():
     dropdb()
     initdb()
@@ -50,39 +48,6 @@ def parse():
     time_parser.run()
     parser = ScheduleParser(thread_number=multiprocessing.cpu_count())
     parser.run()
-
-
-class WorkerProcess(multiprocessing.Process):
-    def __init__(self):
-        super(WorkerProcess,self).__init__(name='celery_worker_process')
-        # Thread.__init__(self)
-
-    def run(self):
-        argv = [
-            'worker',
-            '--loglevel=INFO',
-            '--hostname=local',
-            '-Ofair',
-            '-B'
-        ]
-
-        celery.worker_main(argv)
-
-app.worker_process = None
-
-def start_celery():
-    if app.worker_process is None:
-        app.worker_process = WorkerProcess()
-        app.worker_process.daemon = True
-        app.worker_process.start()
-
-def stop_celery():
-    if app.worker_process:
-        app.worker_process.terminate()
-        app.worker_process = None
-
-atexit.register(stop_celery)
-
 
 @manager.command
 def server():
@@ -100,14 +65,11 @@ def server():
             exec (open(virtualenv).read(), dict(__file__=virtualenv))
     except IOError:
         pass
+
     port = app.config['PORT']
     server_ip = app.config['IP']
-    try:
-        start_celery()
-        gunicorn(server_ip, port, workers=2)
-    except ImportError:
-        pass
-
+    if port is not None and server is not None:
+        gunicorn(server_ip, port, workers=1)
 
 if __name__ == '__main__':
-    server()
+    manager.run(default_command='server')

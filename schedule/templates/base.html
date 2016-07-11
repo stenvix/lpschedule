@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Розклад занять "Львівська Політехніка"</title>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/bundle.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bundle.css') }}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header  mdl-layout--no-desktop-drawer-button">
+    <header class="mdl-layout__header">
+        <div class="mdl-layout__header-row header-title">
+            <!-- Title -->
+           <a href="{{ url_for('index') }}"> <span class="mdl-layout-title">Розклад занять</span></a>
+            <!-- Add spacer, to align navigation to the right -->
+            <div class="mdl-layout-spacer"></div>
+            <!-- Navigation. We hide it in small screens. -->
+            <nav class="mdl-navigation mdl-layout--large-screen-only">
+                <button class="mdl-button mdl-js-button mdl-button--icon"><i class="material-icons">&#xE8AF;</i>
+                </button>
+                <button class="mdl-button mdl-js-button mdl-button--icon"><i class="material-icons">&#xE86F;</i>
+                </button>
+            </nav>
+        </div>
+    </header>
+    <div class="mdl-layout__drawer">
+        <span class="mdl-layout-title title-color">Керування</span>
+        <nav class="mdl-navigation">
+            <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--primary"><i class="material-icons">
+                &#xE8AF;</i>&nbsp;Як користуватись?
+            </button>
+            <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--primary"><i
+                    class="material-icons ">code</i>&nbsp;
+                Розробнику
+            </button>
+        </nav>
+    </div>
+            <main class="mdl-layout__content">
+
+    {% block content %}
+
+    {% endblock %}
+            </main>
+</div>
+</body>
+</html>
