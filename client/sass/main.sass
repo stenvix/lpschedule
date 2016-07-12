@@ -23,17 +23,16 @@
  	min-height: 153px!important
 
 .subgroup
-  //position: absolute
-  //top: 0
-  //left: 0
   font-size: 12px
   margin-top: -1px
   margin-right: -1px
 
 .subgroup--color
-    padding: 0.2em 1em
+    padding: 2px 12px
     //border-radius: 0.25em
-  
+.border-bottom
+  border-bottom: 1px solid rgba(0,0,0,.1)
+
 .subgroup--one
   @extend .subgroup--color
   //background-color: rgb(255, 87, 34)
@@ -45,13 +44,19 @@
 
 .subgroup--two
   @extend .subgroup--color
-  //background-color: rgb(205, 220, 57)
   background-color: rgb(76, 175, 80)
   color: #fff
 .lesson-header
-  border-bottom: 1px solid rgba(0,0,0,.1)
+  @extend .border-bottom
   text-align: center
   font-weight: bold
+.lesson-number
+  display: flex
+  align-items : center
+  justify-content: center
+.lesson-container
+  @extend .border-bottom
+
 .lesson
   position: relative
   ul
@@ -69,10 +74,15 @@
       margin-right: 2px!important
   ul li:first-child
     font-size: 14px!important
-.brd
+.lesson-border
+  border-left: 1px solid rgba(0,0,0,.1)
   .lesson
     @media screen and (max-width: 840px)
       border-bottom: 1px solid rgba(0,0,0,.1)
+    @media screen and (min-width: 840px)
+      &:nth-child(2)
+        border-left: 1px solid rgba(0,0,0,.1)
+  .mdl-cell--5-offset-desktop
     @media screen and (min-width: 840px)
       border-left: 1px solid rgba(0,0,0,.1)
   div:last-child
