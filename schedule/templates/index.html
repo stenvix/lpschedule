@@ -1,22 +1,27 @@
 {% extends 'base.html' %}
-{%  block content %}
+{% block content %}
     <div class="mdl-grid">
-<div class="mdl-cell mdl-cell--4-col mdl-cell--4-offset-desktop mdl-cell--12-col-tablet">
-    <div class="mdl-card mdl-shadow--6dp search-card">
-        <form action="{{ url_for('search')}}" method="post">
-        <div class="mdl-card__supporting-text">
-                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                    <input class="mdl-textfield__input" type="text" id="search" name="data" />
-                    <label class="mdl-textfield__label" for="search">Введіть групу</label>
-                </div>
+        <div class="mdl-cell mdl-cell--4-col mdl-cell--4-offset-desktop mdl-cell--12-col-tablet">
+            <div class="mdl-card mdl-shadow--6dp search-card">
+                <form action="{{ url_for('search') }}" method="post">
+                    <div class="mdl-card__supporting-text">
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                            <input class="mdl-textfield__input" type="text" id="search" name="data"/>
+                            <label class="mdl-textfield__label" for="search">Введіть групу</label>
+                        </div>
 
+                    </div>
+                    <div class="mdl-card__actions mdl-card--border">
+                        <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">Вибір зі
+                            списку
+                        </button>
+                        <button type="submit"
+                                class="mdl-button mdl-button--raised mdl-button--colored mdl-js-button mdl-js-ripple-effect pull-right">
+                            Пошук
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
-        <div class="mdl-card__actions mdl-card--border">
-            <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">Вибір зі списку</button>
-            <button type="submit" class="mdl-button mdl-button--raised mdl-button--colored mdl-js-button mdl-js-ripple-effect pull-right">Пошук</button>
-        </div>
-        </form>
     </div>
-</div>
-    </div>
-{%  endblock %}
+{% endblock %}

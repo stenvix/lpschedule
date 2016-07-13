@@ -13,7 +13,7 @@
     <header class="mdl-layout__header">
         <div class="mdl-layout__header-row header-title">
             <!-- Title -->
-           <a href="{{ url_for('index') }}"> <span class="mdl-layout-title">Розклад занять</span></a>
+            <a href="{{ url_for('index') }}"> <span class="mdl-layout-title">Розклад занять</span></a>
             <!-- Add spacer, to align navigation to the right -->
             <div class="mdl-layout-spacer"></div>
             <!-- Navigation. We hide it in small screens. -->
@@ -37,12 +37,10 @@
             </button>
         </nav>
     </div>
-            <main class="mdl-layout__content">
-
-    {% block content %}
-
-    {% endblock %}
-            </main>
+    <main class="mdl-layout__content">
+        {% block content %}
+        {% endblock %}
+    </main>
 </div>
 </body>
 </html>

@@ -67,4 +67,9 @@ target/
 node_modules
 .idea/
 .db
+#Celery beat file
 celerybeat-schedule
+#Client frontend files
+schedule/static/**/*.css
+schedule/static/**/*.js
+schedule/static/**/*.map

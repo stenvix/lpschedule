@@ -8,38 +8,42 @@
                     </div>
                 </div>
                 {% for lesson in days %}
-                    <div class="mdl-grid mdl-grid--no-spacing lesson-container"  >
-                    <div class="mdl-cell mdl-cell--1-col lesson-number">{{ lesson[0].lesson_number }}
-                    </div>
-                    <div class="mdl-cell mdl-cell--3-col-phone mdl-cell--7-col-tablet mdl-cell--11-col">
-                        <div class="mdl-grid mdl-grid--no-spacing lesson-border">
-                            {% for subgroup in lesson %}
-                                {%  set lol = lesson|length  %}
-                                {% set lal = loop.last %}
-                                <div class="mdl-cell  mdl-cell--12-col {% if lesson|length<2 and (subgroup.subgroup!=-1 and subgroup.subgroup!=0) %}mdl-cell--5-offset-desktop{% endif %} mdl-cell--5-col-desktop lesson">
-                                    {% if subgroup.subgroup!=-1 %}
-                                        <div class="subgroup">
-                                        {% if subgroup.subgroup%2==0 %}<span class="subgroup--one">Перша підгрупа</span>{% else %}<span class="subgroup--two">Друга підгрупа</span>{% endif %}
-                                        </div>
-                                    {% endif %}
-                                    {% if subgroup.lesson_week == week_number or subgroup.lesson_week==-1%}
-                                        <ul class="mdl-list">
-                                            <li class="mdl-list__item"><span class="mdl-list__item-primary-content">
-                                            {{ subgroup.lesson_name }}</span></li>
-                                            {% for teacher in  subgroup.teachers  %}
+                    <div class="mdl-grid mdl-grid--no-spacing lesson-container">
+                        <div class="mdl-cell mdl-cell--1-col lesson-number">{{ lesson[0].lesson_number }}
+                        </div>
+                        <div class="mdl-cell mdl-cell--3-col-phone mdl-cell--7-col-tablet mdl-cell--11-col">
+                            <div class="mdl-grid mdl-grid--no-spacing lesson-border">
+                                {% for subgroup in lesson %}
+                                    {% set lol = lesson|length %}
+                                    {% set lal = loop.last %}
+                                    <div class="mdl-cell  mdl-cell--12-col {% if lesson|length<2 and (subgroup.subgroup!=-1 and subgroup.subgroup!=0) %}mdl-cell--5-offset-desktop{% endif %} mdl-cell--5-col-desktop lesson">
+                                        {% if subgroup.subgroup!=-1 %}
+                                            <div class="subgroup">
+                                                {% if subgroup.subgroup%2==0 %}
+                                                    <span class="subgroup--one">Перша підгрупа</span>{% else %}
+                                                    <span class="subgroup--two">Друга підгрупа</span>{% endif %}
+                                            </div>
+                                        {% endif %}
+                                        {% if subgroup.lesson_week == week_number or subgroup.lesson_week==-1 %}
+                                            <ul class="mdl-list">
                                                 <li class="mdl-list__item"><span class="mdl-list__item-primary-content">
-                                            <i class="material-icons mdl-list__item-icon">person</i>{{ teacher.teacher_name }}</span></li>
-                                            {% endfor %}
-                                            <li class="mdl-list__item">
+                                            {{ subgroup.lesson_name }}</span></li>
+                                                {% for teacher in  subgroup.teachers %}
+                                                    <li class="mdl-list__item"><span
+                                                            class="mdl-list__item-primary-content">
+                                            <i class="material-icons mdl-list__item-icon">person</i>{{ teacher.teacher_name }}</span>
+                                                    </li>
+                                                {% endfor %}
+                                                <li class="mdl-list__item">
                                                 <span class="mdl-list__item-primary-content">
                                             <i class="material-icons mdl-list__item-icon">place</i>{{ subgroup.room }}, {{ subgroup.lesson_type }}</span>
-                                            </li>
-                                        </ul>
-                                    {% endif %}
-                                </div>
-                           {% endfor %}
+                                                </li>
+                                            </ul>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            </div>
                         </div>
-                    </div>
                     </div>
                 {% endfor %}
             </div>
