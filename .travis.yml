@@ -6,10 +6,10 @@ before_install:
   - nvm install 5.0
   - nvm use 5.0
   - npm install
+  - webpack -p
 install: "python setup.py install"
 script:
   - py.test
-  - webpack -p
 deploy:
   skip_cleanup: true
   provider: openshift
