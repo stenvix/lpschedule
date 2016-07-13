@@ -4,7 +4,9 @@
 import logging
 from sqlalchemy import and_
 from grab.spider import Spider, Task
+from schedule import app
 from schedule.models import Institute, Group, Teacher, Lesson, Time
+
 
 WEEKDAYS = {
     u"Пн": "1",
@@ -19,7 +21,7 @@ WEEKDAYS = {
 class ScheduleParser(Spider):
     """ Site scraper for checking changes in base site. """
     #New site http://www.lp.edu.ua/rozklad-dlya-studentiv
-    BASE = 'http://old.lp.edu.ua/node/40'
+    BASE = app.config['SCRAPER_SCHEDULE_URL']
     initial_urls = [BASE]
 
     def prepare(self):

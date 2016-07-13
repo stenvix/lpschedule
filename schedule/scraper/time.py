@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 import logging
 from grab.spider import Spider
+from schedule import app
 from schedule.models import Time
 
 
 class TimeParser(Spider):
-    BASE = 'http://old.lp.edu.ua/node/45'
+    BASE = app.config['SCRAPER_TIME_URL']
     initial_urls = [BASE]
 
     def prepare(self):
