@@ -48,6 +48,8 @@ def parse():
     time_parser.run()
     parser = ScheduleParser(thread_number=multiprocessing.cpu_count())
     parser.run()
+    db.session.close()
+    db.engine.dispose()
 
 @manager.command
 def server():
