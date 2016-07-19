@@ -3,8 +3,8 @@
     {% import 'timetable_macros.html' as temp %}
     <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
         <div class="mdl-tabs__tab-bar">
-            <a href="#week-one" class="mdl-tabs__tab is-active">Перший тиждень</a>
-            <a href="#week-two" class="mdl-tabs__tab">Другий тиждень</a>
+            <a href="#week-one" class="mdl-tabs__tab {% if week== 1 %}is-active {% endif %}">Перший тиждень</a>
+            <a href="#week-two" class="mdl-tabs__tab {% if week== 2 %}is-active {% endif %}">Другий тиждень</a>
         </div>
 
         <div class="mdl-tabs__panel is-active" id="week-one">

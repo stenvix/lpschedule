@@ -24,4 +24,38 @@
             </div>
         </div>
     </div>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+    <script>
+        $(function () {
+            $("#search").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: "/api/group",
+                        dataType: "json",
+                        data: {
+                            search: request.term
+                        },
+                        success: function (data) {
+                            // Handle 'no match' indicated by [ "" ] response
+                            response(
+                                    $.map(data['data'], function (value, key) {
+                                        return {
+                                            label: value.group_full_name,
+                                            value: value.group_id
+                                        }
+                                    })
+                            );
+                        }
+                    });
+                },
+                minLength: 2,
+                select: function (event, ui) {
+                    $("#search").val(ui.item.label);
+                    location.href = '/timetable/' + ui.item.value;
+                    return false;
+                }
+            });
+        });
+    </script>
 {% endblock %}

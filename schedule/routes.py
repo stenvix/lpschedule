@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Application routing for main app."""
+import datetime
 from schedule import app
 from flask import render_template, abort, request, redirect, url_for
 from schedule.models import Group, Lesson
@@ -33,6 +34,18 @@ def search():
             return redirect(url_for('timetable',group_id=group.group_id))
     abort(404)
 
+#Dump way to check week, need more info !!
+def get_week(start=None):
+    if not start:
+        start = datetime.date(datetime.date.today().year - 1, 9, 1)
+    start_week = start.isocalendar()[1]
+    now = datetime.date.today()
+    now_week = now.isocalendar()[1]
+    if start_week % 2 == now_week % 2:
+        return 2
+    else:
+        return 1
+
 @app.route('/timetable/<int:group_id>')
 def timetable(group_id):
     group_lessons = Lesson.query.filter_by(group_id=group_id).order_by('lesson_number','day_number','subgroup').all()
@@ -53,6 +66,6 @@ def timetable(group_id):
                 if len(day) > 0:
                     weeks[day_number] = day
             lessons.append(weeks)
-        return render_template('timetable.html', lessons=lessons)
+        return render_template('timetable.html', lessons=lessons, week = get_week())
     else:
         abort(404)

@@ -1,9 +1,9 @@
 import multiprocessing
 from schedule import celery
+from schedule.scraper import TimeParser, ScheduleParser
 
-@celery.task
+@celery.task(name="schedule.parse")
 def parse():
-    from schedule.scraper import TimeParser, ScheduleParser
     time_parser = TimeParser(thread_number=multiprocessing.cpu_count())
     time_parser.run()
     parser = ScheduleParser(thread_number=multiprocessing.cpu_count())
