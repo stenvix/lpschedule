@@ -3,13 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <title>Розклад занять "Львівська Політехніка"</title>
+
+    <script src="//code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="//code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/bundle.js') }}"></script>
+{#    <script src="https://cdn.jsdelivr.net/jquery.event.move/1.3.5/jquery.event.move.min.js"></script>#}
+{#    <script src="https://cdn.jsdelivr.net/jquery.event.swipe/0.5.2/jquery.event.swipe.min.js"></script>#}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bundle.css') }}">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
-<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header  mdl-layout--no-desktop-drawer-button">
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header  mdl-layout--no-desktop-drawer-button mdl-layout--fixed-tabs">
     <header class="mdl-layout__header">
         <div class="mdl-layout__header-row header-title">
             <!-- Title -->
