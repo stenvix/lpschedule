@@ -82,7 +82,7 @@ $(document).ready(function () {
                 institute_id: institute_id
             },
             success: function (data) {
-                $('#group option').remove();
+                $('#group').empty();
                 var listitems = '<option disabled selected value> -- Виберіть групу -- </option>';
                 $.each(data.data, function (key, value) {
                     listitems += '<option value=' + value.group_id + '>' + value.group_full_name + '</option>';
@@ -101,6 +101,8 @@ $(document).ready(function () {
             dataType: "json",
             method: "GET",
             success: function (data) {
+                $('#institute').empty();
+                $("#group").empty();
                 var listitems = '<option disabled selected value> -- Виберіть інститут -- </option>';
                 $.each(data.data, function (key, value) {
                     listitems += '<option value=' + value.institute_id + '>' + value.institute_abbr + '</option>';
@@ -131,7 +133,6 @@ $(document).ready(function () {
         dialogButton.addEventListener('click', function () {
             dialog.showModal();
             getInstitutes();
-
         });
         dialog.querySelector('button:not([disabled])')
             .addEventListener('click', function () {
