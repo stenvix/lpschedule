@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Розклад занять "Львівська Політехніка"</title>
+    <title>Розклад занять "Львівська Політехніка" {% block title %}{% endblock %}</title>
     <script src="//code.jquery.com/jquery-1.12.4.js"></script>
     <script src="//code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/bundle.js') }}"></script>
@@ -15,7 +15,7 @@
     <header class="mdl-layout__header">
         <div class="mdl-layout__header-row header-title">
             <!-- Title -->
-            <a href="{{ url_for('index') }}"> <span class="mdl-layout-title">Розклад занять</span></a>
+            <a href="{{ url_for('index') }}"> <span class="mdl-layout-title">Розклад занять {{ self.title() }}</span></a>
             <!-- Add spacer, to align navigation to the right -->
             <div class="mdl-layout-spacer"></div>
             <!-- Navigation. We hide it in small screens. -->

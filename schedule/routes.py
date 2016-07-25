@@ -67,7 +67,7 @@ def timetable(group_id):
                 if len(day) > 0:
                     weeks[day_number] = day
             lessons.append(weeks)
-        return render_template('timetable.html', lessons=lessons, week = get_week())
+        return render_template('timetable.html', lessons=lessons, week = get_week(), group = Group.query.get(group_id))
     else:
         abort(404)
 @app.route('/howto')
