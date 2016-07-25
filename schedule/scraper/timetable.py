@@ -53,7 +53,7 @@ class ScheduleParser(Spider):
                     for subgroup in week:
                         if len(subgroup) > 0:
                             teacher = self.save_teacher(subgroup['teacher'])
-                            id = self.save_or_update_lesson(
+                            lesson_id = self.save_or_update_lesson(
                                                         lesson_name = subgroup['name'],
                                                         lesson_number = lesson_key,
                                                         lesson_week=week_key if len(lesson) > 1 else -1,
@@ -65,7 +65,7 @@ class ScheduleParser(Spider):
                                                         semester_part=task.semestr,
                                                         group=task.group_name,
                                                         teacher=teacher)
-                            ids.append(id)
+                            ids.append(lesson_id)
                         else:
                             teacher = None
 

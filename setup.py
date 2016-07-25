@@ -16,5 +16,6 @@ setup(name='LpSchedule',
         'gunicorn>=19.4.5',
         'grab>=0.6.30',
         'psycopg2>=2.5.1',
+        'markdown>=2.6.6',
         'celery==3.1.23'
         ],)

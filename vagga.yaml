@@ -14,6 +14,7 @@ containers:
       - !Install [postgresql,postgresql-client]
       - !EnsureDir /data
       - !EnsureDir /work/.db/data
+
     environ:
       PG_PORT: 5433   # Port of host to use
       PG_DB: test
@@ -23,6 +24,7 @@ containers:
       PG_BIN: /usr/lib/postgresql/9.3/bin
     volumes:
       /data: !BindRW /work/.db/data
+
 commands:
   test: !Supervise
     description: Run app in debug mode
@@ -38,6 +40,7 @@ commands:
         container: database
         run: |
             chown postgres:postgres $PGDATA;
+            chmod 0700 $PGDATA;
             if [ -z "$(ls -A $PGDATA)" ]; then
               su postgres -c "$PG_BIN/pg_ctl initdb";
               su postgres -c "echo 'host all all all trust' >> $PGDATA/pg_hba.conf"

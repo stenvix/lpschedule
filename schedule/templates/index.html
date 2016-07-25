@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
     <div class="mdl-grid">
-        <div class="mdl-cell mdl-cell--4-col mdl-cell--4-offset-desktop mdl-cell--12-col-tablet">
+        <div class="mdl-cell mdl-cell--4-col mdl-cell--4-offset-desktop mdl-cell--12-col-tablet mdl-cell--stretch">
             <div class="mdl-card mdl-shadow--6dp search-card">
                 <form action="{{ url_for('search') }}" method="post">
                     <div class="mdl-card__supporting-text">
@@ -9,10 +9,9 @@
                             <input class="mdl-textfield__input" type="text" id="search" name="data"/>
                             <label class="mdl-textfield__label" for="search">Введіть групу</label>
                         </div>
-
                     </div>
                     <div class="mdl-card__actions mdl-card--border">
-                        <button type="button" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">Вибір зі
+                        <button id="list" type="button" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">Вибір зі
                             списку
                         </button>
                         <button type="submit"
@@ -24,36 +23,6 @@
             </div>
         </div>
     </div>
-    <script>
-        $(function () {
-            $("#search").autocomplete({
-                source: function (request, response) {
-                    $.ajax({
-                        url: "/api/group",
-                        dataType: "json",
-                        data: {
-                            search: request.term
-                        },
-                        success: function (data) {
-                            // Handle 'no match' indicated by [ "" ] response
-                            response(
-                                    $.map(data['data'], function (value, key) {
-                                        return {
-                                            label: value.group_full_name,
-                                            value: value.group_id
-                                        }
-                                    })
-                            );
-                        }
-                    });
-                },
-                minLength: 2,
-                select: function (event, ui) {
-                    $("#search").val(ui.item.label);
-                    location.href = '/timetable/' + ui.item.value;
-                    return false;
-                }
-            });
-        });
-    </script>
+{% endblock %}
+{% block  footer%}
 {% endblock %}

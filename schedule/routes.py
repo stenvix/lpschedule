@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """Application routing for main app."""
-import datetime
+import datetime, markdown, codecs
 from schedule import app
 from flask import render_template, abort, request, redirect, url_for
 from schedule.models import Group, Lesson
+
 @app.route('/')
 def index():
     """Main view."""
@@ -69,3 +70,9 @@ def timetable(group_id):
         return render_template('timetable.html', lessons=lessons, week = get_week())
     else:
         abort(404)
+@app.route('/howto')
+def how_to():
+    input_file = codecs.open('schedule/static/pages/faq.md', mode="r", encoding="utf-8")
+    text = input_file.read()
+    html = markdown.markdown(text)
+    return render_template('pages.html', content = html)
