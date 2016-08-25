@@ -26,7 +26,7 @@ containers:
       /data: !BindRW /work/.db/data
 
 commands:
-  test: !Supervise
+  run: !Supervise
     description: Run app in debug mode
     children:
       service: !Command
