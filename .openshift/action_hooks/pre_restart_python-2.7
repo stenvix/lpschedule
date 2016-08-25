@@ -1,5 +1,5 @@
 #!/bin/bash
 source $OPENSHIFT_PYTHON_DIR'virtenv/bin/activate';
 cd $OPENSHIFT_REPO_DIR;
-celery multi restart worker1 -A schedule.celery -B -l info --logfile=$OPENSHIFT_LOG_DIR"celery.log";
+celery multi restart worker1 -A schedule.tasks.celery -B -l info --logfile=$OPENSHIFT_LOG_DIR"celery.log";
 echo "Celery successfully restarted"
