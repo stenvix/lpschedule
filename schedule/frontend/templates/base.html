@@ -15,19 +15,19 @@
     <header class="mdl-layout__header">
         <div class="mdl-layout__header-row header-title">
             <!-- Title -->
-            <a href="{{ url_for('index') }}"> <span class="mdl-layout-title">Розклад занять {{ self.title() }}</span></a>
+            <a href="{{ url_for('frontend.index') }}"> <span class="mdl-layout-title">Розклад занять {{ self.title() }}</span></a>
             <!-- Add spacer, to align navigation to the right -->
             <div class="mdl-layout-spacer"></div>
             <!-- Navigation. We hide it in small screens. -->
             <nav class="mdl-navigation mdl-layout--large-screen-only">
-                <a href="{{ url_for('how_to') }}" class="mdl-button mdl-js-button mdl-button--icon"> <i class="material-icons">&#xE8AF;</i></a>
+                <a href="{{ url_for('frontend.how_to') }}" class="mdl-button mdl-js-button mdl-button--icon"> <i class="material-icons">&#xE8AF;</i></a>
             </nav>
         </div>
     </header>
     <div class="mdl-layout__drawer">
         <span class="mdl-layout-title title-color">Керування</span>
         <nav class="mdl-navigation">
-            <a href="{{ url_for('how_to') }}" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--primary"><i class="material-icons">
+            <a href="{{ url_for('frontend.how_to') }}" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--primary"><i class="material-icons">
                 &#xE8AF;</i>&nbsp;Як користуватись?
             </a>
         </nav>
@@ -42,7 +42,7 @@
       Розклад занять
     </div>
     <ul class="mdl-mini-footer__link-list">
-      <li><a href="{{ url_for('how_to') }}">FAQ</a></li>
+      <li><a href="{{ url_for('frontend.how_to') }}">FAQ</a></li>
     </ul>
   </div>
   <div class="mdl-mini-footer__right-section">

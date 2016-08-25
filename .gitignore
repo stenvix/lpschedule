@@ -69,3 +69,5 @@ node_modules
 .db
 #Celery beat file
 celerybeat-schedule
+*.swp
+*.pid

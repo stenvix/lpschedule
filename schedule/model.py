@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 """App models."""
-from schedule import db
+from schedule.core import db
 from sqlalchemy.ext.declarative import declared_attr
-
 
 
 class Base(object):
     @declared_attr
-    def __tablename__(cls):
-        return cls.__name__.lower()
+    def __tablename__(self):
+        return self.__name__.lower()
 
 
 class Lesson(Base, db.Model):
@@ -33,7 +32,8 @@ class Lesson(Base, db.Model):
 
     @staticmethod
     def get_by_attrs(**kwargs):
-        return Lesson.query.filter_by(subgroup=kwargs.get('subgroup'), lesson_number=kwargs.get('lesson_number'),
+        return Lesson.query.filter_by(subgroup=kwargs.get('subgroup'),
+                                      lesson_number=kwargs.get('lesson_number'),
                                       lesson_week=kwargs.get('lesson_week'),
                                       day_number=kwargs.get('day_number'),
                                       group=Group.get_by_full_name(kwargs.get('group'))).first()
@@ -50,41 +50,41 @@ class Lesson(Base, db.Model):
         db.session.commit()
 
     @staticmethod
-    def update(lesson,**kwargs):
+    def update(lesson, **kwargs):
         changes = False
 
         lesson_name = kwargs.get('lesson_name')
-        if lesson_name is not None and lesson.lesson_name!=lesson_name:
+        if lesson_name is not None and lesson.lesson_name != lesson_name:
             lesson.lesson_name = lesson_name
             changes = True
         lesson_type = kwargs.get('lesson_type')
-        if lesson_type is not None and lesson.lesson_type!=lesson_type:
-            lesson.lesson_type=lesson_type
+        if lesson_type is not None and lesson.lesson_type != lesson_type:
+            lesson.lesson_type = lesson_type
             changes = True
-        semester_part=kwargs.get('semester_part')
-        if semester_part is not None and lesson.semester_part!=int(semester_part):
+        semester_part = kwargs.get('semester_part')
+        if semester_part is not None and lesson.semester_part != int(semester_part):
             lesson.semester_part = int(semester_part)
             changes = True
 
-        room=kwargs.get('room')
-        if room is not None and lesson.room!=room:
+        room = kwargs.get('room')
+        if room is not None and lesson.room != room:
             lesson.room = room
             changes = True
 
-        day_name=kwargs.get('day_name')
-        if day_name is not None and lesson.day_name!=day_name:
-            lesson.day_name=day_name
+        day_name = kwargs.get('day_name')
+        if day_name is not None and lesson.day_name != day_name:
+            lesson.day_name = day_name
             changes = True
 
-        teacher=kwargs.get('teacher')
-        if teacher is not None and teacher not in lesson.teachers :
+        teacher = kwargs.get('teacher')
+        if teacher is not None and teacher not in lesson.teachers:
             lesson.teachers = teacher
             changes = True
 
-        active=kwargs.get('active')
-        if active is not None and lesson.active!=active:
-            lesson.active=active
-            changes=True
+        active = kwargs.get('active')
+        if active is not None and lesson.active != active:
+            lesson.active = active
+            changes = True
 
         if changes:
             db.session.commit()
@@ -144,7 +144,7 @@ class Teacher(Base, db.Model):
     teacher_id = db.Column(db.Integer, primary_key=True)
     teacher_name = db.Column(db.Unicode, unique=True)
     active = db.Column(db.Boolean, default=True)
-    lessons = db.relationship('Lesson', secondary='lesson_teacher', backref="teachers")
+    lessons = db.relationship('Lesson', secondary='lesson_teacher', backref='teachers')
 
     @staticmethod
     def get_by_name(teacher_name):

@@ -34,8 +34,8 @@ commands:
         run: |
             touch /work/.dbcreation; # Create lock file
             while [ -f /work/.dbcreation ]; do sleep 0.2; done # Acquire lock
-            celery multi start worker1 -A schedule.celery -B -l debug -Ofair --logfile="celery.log";
-            python app.py runserver
+            celery multi start worker1 -A schedule.tasks.celery -B -l debug -Ofair --logfile="celery.log";
+            python app.py
       db: !Command
         container: database
         run: |

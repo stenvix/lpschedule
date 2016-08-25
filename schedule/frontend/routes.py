@@ -1,16 +1,23 @@
 # -*- coding: utf-8 -*-
-"""Application routing for main app."""
-import datetime, markdown, codecs
-from schedule import app
-from flask import render_template, abort, request, redirect, url_for
+"""frontendlication routing for main frontend."""
+import datetime
+import markdown
+import codecs
+
+from flask import render_template, abort, request, redirect, url_for, Blueprint
 from schedule.models import Group, Lesson
 
-@app.route('/')
+
+frontend = Blueprint('frontend', __name__)
+
+
+@frontend.route('/')
 def index():
     """Main view."""
     return render_template('index.html')
 
-@app.context_processor
+
+@frontend.context_processor
 def utility_processor():
     def day_to_string(day_number):
         WEEKDAYS = {
@@ -26,16 +33,17 @@ def utility_processor():
     return dict(day_to_string=day_to_string)
 
 
-@app.route('/search', methods=['POST'])
+@frontend.route('/search', methods=['POST'])
 def search():
     data = request.form.get('data')
     if data is not None:
-        group = Group.query.filter_by(group_full_name = data.upper()).first()
+        group = Group.query.filter_by(group_full_name=data.upper()).first()
         if group is not None:
-            return redirect(url_for('timetable',group_id=group.group_id))
+            return redirect(url_for('timetable', group_id=group.group_id))
     abort(404)
 
-#Dump way to check week, need more info !!
+
+# Dump way to check week, need more info !!
 def get_week(start=None):
     if not start:
         start = datetime.date(datetime.date.today().year - 1, 9, 1)
@@ -47,32 +55,36 @@ def get_week(start=None):
     else:
         return 1
 
-@app.route('/timetable/<int:group_id>')
+
+@frontend.route('/timetable/<int:group_id>')
 def timetable(group_id):
-    group_lessons = Lesson.query.filter_by(group_id=group_id).order_by('lesson_number','day_number','subgroup').all()
+    group_lessons = Lesson.query.filter_by(group_id=group_id).order_by('lesson_number', 'day_number', 'subgroup').all()
     if group_lessons is not None and len(group_lessons) > 0:
-        lessons=[]
-        for week in range(0,2):
+        lessons = []
+        for week in range(0, 2):
             weeks = {}
-            for day_number in range(1,8):
+            for day_number in range(1, 8):
                 day = []
-                for lesson_number in range(1,9):
+                for lesson_number in range(1, 9):
                     lesson_list = []
                     for lesson in group_lessons:
-                        if lesson.day_number == day_number and lesson.lesson_number == lesson_number and \
-                                                                (lesson.lesson_week==week or lesson.lesson_week==-1):
+                        if lesson.day_number == day_number and \
+                           lesson.lesson_number == lesson_number and \
+                           (lesson.lesson_week == week or lesson.lesson_week == -1):
                             lesson_list.append(lesson)
-                    if len(lesson_list)>0:
+                    if len(lesson_list) > 0:
                         day.append(lesson_list)
                 if len(day) > 0:
                     weeks[day_number] = day
             lessons.append(weeks)
-        return render_template('timetable.html', lessons=lessons, week = get_week(), group = Group.query.get(group_id))
+        return render_template('timetable.html', lessons=lessons, week=get_week(), group=Group.query.get(group_id))
     else:
         abort(404)
-@app.route('/howto')
+
+
+@frontend.route('/howto')
 def how_to():
-    input_file = codecs.open('schedule/static/pages/faq.md', mode="r", encoding="utf-8")
+    input_file = codecs.open('schedule/frontend/static/pages/faq.md', mode='r', encoding='utf-8')
     text = input_file.read()
     html = markdown.markdown(text)
-    return render_template('pages.html', content = html)
+    return render_template('pages.html', content=html)

@@ -4,24 +4,24 @@
 import logging
 from sqlalchemy import and_
 from grab.spider import Spider, Task
-from schedule import app
 from schedule.models import Institute, Group, Teacher, Lesson, Time
 
 
 WEEKDAYS = {
-    u"Пн": "1",
-    u"Вт": "2",
-    u"Ср": "3",
-    u"Чт": "4",
-    u"Пт": "5",
-    u"Сб": "6",
-    u"Нд": "7",
+    u'Пн': '1',
+    u'Вт': '2',
+    u'Ср': '3',
+    u'Чт': '4',
+    u'Пт': '5',
+    u'Сб': '6',
+    u'Нд': '7',
 }
+
 
 class ScheduleParser(Spider):
     """ Site scraper for checking changes in base site. """
-    #New site http://www.lp.edu.ua/rozklad-dlya-studentiv
-    BASE = app.config['SCRAPER_SCHEDULE_URL']
+    # New site http://www.lp.edu.ua/rozklad-dlya-studentiv
+    BASE = 'http://old.lp.edu.ua/node/40'
     initial_urls = [BASE]
 
     def prepare(self):
@@ -54,22 +54,24 @@ class ScheduleParser(Spider):
                         if len(subgroup) > 0:
                             teacher = self.save_teacher(subgroup['teacher'])
                             lesson_id = self.save_or_update_lesson(
-                                                        lesson_name = subgroup['name'],
-                                                        lesson_number = lesson_key,
-                                                        lesson_week=week_key if len(lesson) > 1 else -1,
-                                                        day_number =day_key,
-                                                        lesson_type=subgroup['room'].split(',')[1].strip(),
-                                                        subgroup=subgroup['subgroup'],
-                                                        room=subgroup['room'].split(',')[0],
-                                                        day_name = u's',
-                                                        semester_part=task.semestr,
-                                                        group=task.group_name,
-                                                        teacher=teacher)
+                                lesson_name=subgroup['name'],
+                                lesson_number=lesson_key,
+                                lesson_week=week_key if len(lesson) > 1 else -1,
+                                day_number=day_key,
+                                lesson_type=subgroup['room'].split(',')[1].strip(),
+                                subgroup=subgroup['subgroup'],
+                                room=subgroup['room'].split(',')[0],
+                                day_name=u's',
+                                semester_part=task.semestr,
+                                group=task.group_name,
+                                teacher=teacher)
                             ids.append(lesson_id)
                         else:
                             teacher = None
 
-        result = Lesson.query.filter(and_(~Lesson.lesson_id.in_(ids), Lesson.group_id == Group.get_by_full_name(task.group_name).group_id)).all()
+        result = Lesson.query.filter(
+            and_(~Lesson.lesson_id.in_(ids),
+                 Lesson.group_id == Group.get_by_full_name(task.group_name).group_id)).all()
         for item in result:
             Lesson.deactivate(item)
 
@@ -96,25 +98,30 @@ class ScheduleParser(Spider):
         room = kwargs.get('room')
         teacher = kwargs.get('teacher')
 
-        if lesson_number is None and lesson_week is None and day_number  is None and subgroup  is None and group is None:
+        if lesson_number is None and lesson_week is None and day_number is None and subgroup is None and group is None:
             return
         lesson = Lesson.get_by_attrs(lesson_number=lesson_number, lesson_week=lesson_week, day_number=day_number,
                                      subgroup=subgroup, group=group)
 
         if lesson:
-            Lesson.update(lesson,lesson_name=lesson_name,lesson_type=lesson_type,semester_part=semester_part,
-                          room=room,teacher=teacher,day_name=day_name, active=True)
+            Lesson.update(lesson, lesson_name=lesson_name,
+                          lesson_type=lesson_type,
+                          semester_part=semester_part,
+                          room=room, teacher=teacher,
+                          day_name=day_name, active=True)
         else:
             time = Time.get_by_number(lesson_number)
-            lesson = Lesson(lesson_name=lesson_name, lesson_number=lesson_number, lesson_week=lesson_week,
-                            day_number=day_number, lesson_type=lesson_type, subgroup=subgroup, room=room,
-                            day_name=day_name, semester_part=semester_part, group=Group.get_by_full_name(group), time=time)
+            lesson = Lesson(lesson_name=lesson_name, lesson_number=lesson_number,
+                            lesson_week=lesson_week, day_number=day_number,
+                            lesson_type=lesson_type, subgroup=subgroup, room=room,
+                            day_name=day_name, semester_part=semester_part,
+                            group=Group.get_by_full_name(group), time=time)
             lesson.teachers.append(teacher)
             Lesson.add(lesson)
         return lesson.lesson_id
 
     @classmethod
-    def parseSubjectTable(self,html):
+    def parseSubjectTable(self, html):
         subjects = {}
         for week, tr in enumerate(html.select('./table/tr')):
             one_subject = []
@@ -139,22 +146,25 @@ class ScheduleParser(Spider):
                     else:
                         subject['subgroup'] = -1
                     one_subject.append(subject)
-            subjects["{}".format(week)] = one_subject
+            subjects['{}'.format(week)] = one_subject
         return subjects
+
     @classmethod
     def task_initial(self, grab, task):
         for inst in grab.doc.select('//select[@name="inst"]/option'):
-            if not inst.text(): continue
+            if not inst.text():
+                continue
             inst_name, inst_attr = inst.text(), inst.attr('value')
             self.save_inst(inst_name)
             yield Task('institute', inst_name=inst_name, inst_attr=inst_attr,
-                       url="{}?inst={}&group=&semestr=1&semest_part=1".format(ScheduleParser.BASE, inst_attr))
+                       url='{}?inst={}&group=&semestr=1&semest_part=1'.format(ScheduleParser.BASE, inst_attr))
 
     @classmethod
     def task_institute(self, grab, task):
         logging.debug(u'Fetching institute {}'.format(task.inst_name))
         for group in grab.doc.select('//select[@name="group"]/option'):
-            if not group.text(): continue
+            if not group.text():
+                continue
             group_name, group_attr = group.text(), group.attr('value')
             yield Task('group', inst_name=task.inst_name, inst_attr=task.inst_attr, group_name=group_name,
                        group_attr=group_attr,
@@ -204,4 +214,4 @@ class ScheduleParser(Spider):
         if schedule:
             self.save_lesson(schedule, task)
         else:
-            logging.info("Schedule is empty")
+            logging.info('Schedule is empty')

@@ -1,7 +1,8 @@
-# -*- coding: utf-8 -*-
-from flask import jsonify, request
-from schedule.api import api
+from flask import Blueprint
 from schedule.models import Group, Institute
+from flask import jsonify, request
+
+api = Blueprint('api', __name__)
 
 
 def row2dict(row):
@@ -20,13 +21,14 @@ def group():
         all_groups = Group.query.filter_by(institute_id=params).order_by('group_full_name').all()
     if group_name:
         group_name = group_name.upper()
-        all_groups = Group.query.filter(Group.group_full_name.like(group_name+"%")).order_by('group_full_name').all()
+        all_groups = Group.query.filter(Group.group_full_name.like(group_name + '%')).order_by('group_full_name').all()
     data = []
     for i in all_groups:
         data.append(row2dict(i))
     return jsonify(data=data)
 
-@api.route('/institute', methods=["GET"])
+
+@api.route('/institute', methods=['GET'])
 def institute():
     all_institutes = Institute.query.all()
     data = []

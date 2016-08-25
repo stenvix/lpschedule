@@ -1,2 +1,0 @@
-# -*- coding: utf-8 -*-
-from model import Lesson,Teacher, Group, Institute, Time
