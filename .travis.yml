@@ -15,4 +15,4 @@ deploy:
     dev: dev
   domain: '23454567'
   on:
-    repo: stepanov-valentin/lpschedule
+    repo: stenvix/lpschedule
