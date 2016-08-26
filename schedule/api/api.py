@@ -8,7 +8,7 @@ api = Blueprint('api', __name__)
 def row2dict(row):
     d = {}
     for column in row.__table__.columns:
-        d[column.name] = unicode(getattr(row, column.name))
+        d[column.name] = u'{0}'.format(getattr(row, column.name))
     return d
 
 
