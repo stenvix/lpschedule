@@ -4,16 +4,17 @@ import datetime
 import markdown
 import codecs
 
-from flask import render_template, abort, request, redirect, url_for, Blueprint
+from flask import render_template, abort, request, redirect, url_for, flash, Blueprint
 from schedule.models import Group, Lesson
-
-
+from ..core import logger
+from ..helpers import print_params
 frontend = Blueprint('frontend', __name__)
 
 
 @frontend.route('/')
 def index():
     """Main view."""
+    logger.debug('%s', request.url)
     return render_template('index.html')
 
 
@@ -35,11 +36,15 @@ def utility_processor():
 
 @frontend.route('/search', methods=['POST'])
 def search():
+    logger.debug('%s [%s]', request.url, print_params(request.form))
     data = request.form.get('data')
     if data is not None:
         group = Group.query.filter_by(group_full_name=data.upper()).first()
         if group is not None:
-            return redirect(url_for('timetable', group_id=group.group_id))
+            return redirect(url_for('frontend.timetable', group_id=group.group_id))
+        else:
+            flash('Введіть дані запиту')
+            return render_template('index.html')
     abort(404)
 
 
