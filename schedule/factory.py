@@ -4,13 +4,15 @@ from celery import Celery
 from flask import Flask
 from flask_migrate import Migrate
 from .core import db
-from .helpers import register_blueprints
+from .helpers import register_blueprints, init_logging
 
 
 def create_app(package_name, package_path):
     app = Flask(package_name)
-    app.config.from_pyfile('config.cfg')
+    app.config.from_object('schedule.config')
+    app.config.from_pyfile('config.cfg', silent=True)
     db.init_app(app)
+    init_logging(app)
     Migrate(app, db)
     register_blueprints(app, package_name, package_path)
     return app

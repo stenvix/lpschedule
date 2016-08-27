@@ -1,8 +1,12 @@
 """App config."""
 import os
+
 from celery.schedules import crontab
 
-DEBUG = True
+DEBUG = False
+TESTING = True
+LOGGER_NAME = 'schedule'
+FLASK_LOG_DIR = os.environ.get('OPENSHIFT_LOG_DOR', os.getcwd())
 PROPAGATE_EXCEPTIONS = True
 SECRET_KEY = os.environ.get(
     'SECRET_KEY',
@@ -19,11 +23,15 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False
 SCRAPER_SCHEDULE_URL = 'http://old.lp.edu.ua/node/40'
 SCRAPER_TIME_URL = 'http://old.lp.edu.ua/node/45'
 CELERY = {
-    'CELERY_BROKER_URL' : 'sqla+'+os.environ.get('OPENSHIFT_POSTGRESQL_DB_URL', 'postgresql://vagga:vagga@127.0.0.1:5433/test?client_encoding=utf8'),
-    'CELERY_RESULT_BACKEND':'db+'+os.environ.get('OPENSHIFT_POSTGRESQL_DB_URL', 'postgresql://vagga:vagga@127.0.0.1:5433/test?client_encoding=utf8'),
-    'CELERY_TIMEZONE' :'Europe/Kiev',
-    'CELERY_ENABLE_UTC' : True,
-    'CELERYBEAT_SCHEDULE' : {
+    'CELERY_BROKER_URL': 'sqla+' + os.environ.get(
+        'OPENSHIFT_POSTGRESQL_DB_URL',
+        'postgresql://vagga:vagga@127.0.0.1:5433/test?client_encoding=utf8'),
+    'CELERY_RESULT_BACKEND': 'db+' + os.environ.get(
+        'OPENSHIFT_POSTGRESQL_DB_URL',
+        'postgresql://vagga:vagga@127.0.0.1:5433/test?client_encoding=utf8'),
+    'CELERY_TIMEZONE': 'Europe/Kiev',
+    'CELERY_ENABLE_UTC': True,
+    'CELERYBEAT_SCHEDULE': {
         'every-day': {
             'task': 'schedule.parse',
             'schedule': crontab(minute='0', hour='*/12')

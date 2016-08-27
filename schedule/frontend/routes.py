@@ -63,6 +63,7 @@ def get_week(start=None):
 
 @frontend.route('/timetable/<int:group_id>')
 def timetable(group_id):
+    logger.debug('%s [%s]', request.url, print_params(request.form))
     group_lessons = Lesson.query.filter_by(group_id=group_id).order_by('lesson_number', 'day_number', 'subgroup').all()
     if group_lessons is not None and len(group_lessons) > 0:
         lessons = []
@@ -89,6 +90,7 @@ def timetable(group_id):
 
 @frontend.route('/howto')
 def how_to():
+    logger.debug('%s', request.url)
     input_file = codecs.open('schedule/frontend/static/pages/faq.md', mode='r', encoding='utf-8')
     text = input_file.read()
     html = markdown.markdown(text)

@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 
-
-import logging
 from sqlalchemy import and_
 from grab.spider import Spider, Task
 from schedule.models import Institute, Group, Teacher, Lesson, Time
-
+from celery.utils.log import get_task_logger
 
 WEEKDAYS = {
     u'Пн': '1',
@@ -16,6 +14,8 @@ WEEKDAYS = {
     u'Сб': '6',
     u'Нд': '7',
 }
+
+logger = get_task_logger(__name__)
 
 
 class ScheduleParser(Spider):
@@ -161,7 +161,7 @@ class ScheduleParser(Spider):
 
     @classmethod
     def task_institute(self, grab, task):
-        logging.debug(u'Fetching institute {}'.format(task.inst_name))
+        print(u'Fetching institute {}'.format(task.inst_name))
         for group in grab.doc.select('//select[@name="group"]/option'):
             if not group.text():
                 continue
@@ -173,7 +173,7 @@ class ScheduleParser(Spider):
 
     @classmethod
     def task_group(self, grab, task):
-        logging.debug(u'{} in {}'.format(task.group_name, task.inst_name))
+        logger.debug(u'{} in {}'.format(task.group_name, task.inst_name))
         self.save_group(task.group_name, task.url, Institute.get_by_attr(task.inst_name))
         semestr = grab.doc.select('//select[@name="semestr"]/option[@selected]/@value')
         semestr_part = grab.doc.select('//select[@name="semest_part"]/option[@selected]/@value')
@@ -190,7 +190,7 @@ class ScheduleParser(Spider):
 
     @classmethod
     def task_parse(self, grab, task):
-        logging.info(
+        logger.info(
             u'Parse semester {}, institute {}, group {} url {}'.format(task.semestr, task.inst_name, task.group_name,
                                                                        task.url))
         schedule = {}
@@ -214,4 +214,4 @@ class ScheduleParser(Spider):
         if schedule:
             self.save_lesson(schedule, task)
         else:
-            logging.info('Schedule is empty')
+            logger.info('Schedule is empty')
