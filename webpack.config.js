@@ -6,7 +6,7 @@ module.exports = [{
         bundle: "./app.js"
     },
     output: {
-        path: __dirname + "/schedule/static",
+        path: __dirname + "/schedule/frontend/static",
         filename: "js/[name].js"
     },
     externals: {

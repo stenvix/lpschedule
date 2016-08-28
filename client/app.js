@@ -3,12 +3,13 @@
  */
 
 require("./sass/main.sass");
-require("material-design-lite/material.min.css");
+require("./material.css");
 require("dialog-polyfill/dialog-polyfill.css");
-require("material-design-lite/material.min.js");
+require("./material.js");
 require("jquery.event.move");
 require("jquery.event.swipe");
-
+require("./swiper.css")
+var Swiper = require("./swiper.jquery.js");
 var dialogPolyfill = require("dialog-polyfill/dialog-polyfill.js");
 
 $(document).ready(function () {
@@ -43,36 +44,31 @@ $(document).ready(function () {
         });
     });
     var snackbarContainer = document.querySelector("#messages");
-    $("#timetable")
-        .on("movestart", function (e) {
-            // If the movestart is heading off in an upwards or downwards
-            // direction, prevent it so that the browser scrolls normally.
-            if ((e.distX > e.distY && e.distX < -e.distY) ||
-                (e.distX < e.distY && e.distX > -e.distY)) {
-                e.preventDefault();
-            }
-        });
-    $("#timetable").on("swipeleft", function (event) {
+    var initialSlide = 0;
+    $(".mdl-tabs__tab").each(function (key, value){
+        if($(value).hasClass('is-active')){
+            initialSlide = key;
+        }
+    })
+    //initialize swiper when document ready  and element is exist
+    if($(".swiper-container").length > 0){
+        var mySwiper = new Swiper ('.swiper-container', {
+          // Optional parameters
+          initialSlide: initialSlide,
+          direction: 'horizontal',
+          loop: false,
+          prevButton: '#week-one',
+          nextButton: '#week-two'
+        })
+        mySwiper.on('slideChangeStart', function () {
         $(".mdl-tabs__tab").each(function (key, value) {
-            if ($(value).hasClass("is-active") && key === 0) {
-                $(".mdl-tabs__tab").toggleClass("is-active");
-                $(".mdl-tabs__panel").toggleClass("is-active");
-            } else if (key === 1) {
-                snackbarContainer.MaterialSnackbar.showSnackbar({message: $(value).text()});
-            }
+                if(mySwiper.activeIndex == key){
+                    snackbarContainer.MaterialSnackbar.showSnackbar({message: $(value).text()});
+                }
+                $(value).toggleClass("is-active");
+            });
         });
-    });
-    $("#timetable").on("swiperight", function (event) {
-        $(".mdl-tabs__tab").each(function (key, value) {
-            if ($(value).hasClass("is-active") && key === 1) {
-                $(".mdl-tabs__tab").toggleClass("is-active");
-                $(".mdl-tabs__panel").toggleClass("is-active");
-            } else if (key === 0) {
-                snackbarContainer.MaterialSnackbar.showSnackbar({message: $(value).text()});
-            }
-        });
-
-    });
+    }
     function getGroups(institute_id) {
         $.ajax({
             url: '/api/group',
@@ -127,17 +123,21 @@ $(document).ready(function () {
     (function () {
         var dialogButton = document.querySelector('#list');
         var dialog = document.querySelector('#dialog');
-        if (!dialog.showModal) {
-            dialogPolyfill.registerDialog(dialog);
+        if(dialog){
+            if (!dialog.showModal) {
+                dialogPolyfill.registerDialog(dialog);
+            }
+            if(dialogButton){
+                dialogButton.addEventListener('click', function () {
+                    dialog.showModal();
+                    getInstitutes();
+                });
+            }
+            dialog.querySelector('button:not([disabled])')
+                .addEventListener('click', function () {
+                    dialog.close();
+                });
         }
-        dialogButton.addEventListener('click', function () {
-            dialog.showModal();
-            getInstitutes();
-        });
-        dialog.querySelector('button:not([disabled])')
-            .addEventListener('click', function () {
-                dialog.close();
-            });
     })()
 
 });
