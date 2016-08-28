@@ -26,8 +26,34 @@ containers:
       /data: !BindRW /work/.db/data
 
 commands:
-  run: !Supervise
+  debug: !Supervise
     description: Run app in debug mode
+    children:
+      service: !Command
+        container: schedule
+        run: |
+            touch /work/.dbcreation; # Create lock file
+            while [ -f /work/.dbcreation ]; do sleep 0.2; done # Acquire lock
+            celery multi start worker1 -A schedule.tasks.celery -B -l debug -Ofair --logfile="celery.log";
+            python manage.py
+      db: !Command
+        container: database
+        run: |
+            chown postgres:postgres $PGDATA;
+            chmod 0700 $PGDATA;
+            if [ -z "$(ls -A $PGDATA)" ]; then
+              su postgres -c "$PG_BIN/pg_ctl initdb";
+              su postgres -c "echo 'host all all all trust' >> $PGDATA/pg_hba.conf"
+              su postgres -c "$PG_BIN/pg_ctl -w -o '-F --port=$PG_PORT -k /tmp' start";
+              su postgres -c "$PG_BIN/psql -h 127.0.0.1 -p $PG_PORT -c \"CREATE USER $PG_USER WITH PASSWORD '$PG_PASSWORD';\""
+              su postgres -c "$PG_BIN/createdb -h 127.0.0.1 -p $PG_PORT $PG_DB -O $PG_USER";
+            else
+              su postgres -c "$PG_BIN/pg_ctl -w -o '-F --port=$PG_PORT -k /tmp' start";
+            fi
+            rm /work/.dbcreation # Release lock
+            sleep infinity
+  run: !Supervise
+    description: Run app on production mode
     children:
       service: !Command
         container: schedule
