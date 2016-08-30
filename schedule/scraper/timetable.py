@@ -64,7 +64,7 @@ class ScheduleParser(Spider):
                                 subgroup=subgroup['subgroup'],
                                 room=subgroup['room'].split(',')[0],
                                 day_name=u's',
-                                semester_part=task.semestr,
+                                semester_part=task.semester,
                                 group=task.group_name,
                                 teacher=teacher)
                             ids.append(lesson_id)
@@ -158,8 +158,21 @@ class ScheduleParser(Spider):
                 continue
             inst_name, inst_attr = inst.text(), inst.attr('value')
             self.save_inst(inst_name)
-            yield Task('institute', inst_name=inst_name, inst_attr=inst_attr,
-                       url='{}?inst={}&group=&semestr=1&semest_part=1'.format(ScheduleParser.BASE, inst_attr))
+            semesters = grab.doc.select('//select[@name="semestr"]/option/@value')
+            semester_part = grab.doc.select('//select[@name="semest_part"]/option[@selected]/@value')
+            if (len(semesters) > 0 and len(semester_part) > 0):
+                semester = self.get_semester(semesters)
+                for part in semester_part:
+                    yield Task('institute',
+                               inst_name=inst_name,
+                               inst_attr=inst_attr,
+                               semester=semester,
+                               semester_part=part.text(),
+                               url='{}?inst={}&group=&semestr={}&semest_part={}'.format(
+                                   ScheduleParser.BASE,
+                                   inst_attr,
+                                   semester,
+                                   part.text()))
 
     @classmethod
     def task_institute(self, grab, task):
@@ -168,33 +181,25 @@ class ScheduleParser(Spider):
             if not group.text():
                 continue
             group_name, group_attr = group.text(), group.attr('value')
-            yield Task('group', inst_name=task.inst_name, inst_attr=task.inst_attr, group_name=group_name,
+            self.save_group(group_name, task.url, Institute.get_by_attr(task.inst_name))
+            yield Task('parse',
+                       inst_name=task.inst_name,
+                       inst_attr=task.inst_attr,
+                       group_name=group_name,
                        group_attr=group_attr,
-                       url='{}?inst={}&group={}&semestr=1&semest_part=1'.format(ScheduleParser.BASE, task.inst_attr,
-                                                                                group_attr))
-
-    @classmethod
-    def task_group(self, grab, task):
-        logger.debug(u'{} in {}'.format(task.group_name, task.inst_name))
-        self.save_group(task.group_name, task.url, Institute.get_by_attr(task.inst_name))
-        semesters = grab.doc.select('//select[@name="semestr"]/option/@value')
-        semestr_part = grab.doc.select('//select[@name="semest_part"]/option[@selected]/@value')
-        if (len(semesters) > 0 and len(semestr_part) > 0):
-            semester = self.get_semester(semesters)
-            for part in semestr_part:
-                yield Task('parse', inst_name=task.inst_name,
-                           inst_attr=task.inst_attr, group_name=task.group_name, group_attr=task.group_attr,
-                           semestr=semester, semestr_part=part.text(),
-                           url='{}?inst={}&group={}&semestr={}&semest_part={}'.format(ScheduleParser.BASE,
-                                                                                      task.inst_attr,
-                                                                                      task.group_attr,
-                                                                                      semester,
-                                                                                      part.text()))
+                       semester=task.semester,
+                       semester_part=task.semester_part,
+                       url='{}?inst={}&group={}&semestr={}&semest_part={}'.format(
+                           ScheduleParser.BASE,
+                           task.inst_attr,
+                           group_attr,
+                           task.semester,
+                           task.semester_part))
 
     @classmethod
     def task_parse(self, grab, task):
         logger.info(
-            u'Parse semester {}, institute {}, group {} url {}'.format(task.semestr, task.inst_name, task.group_name,
+            u'Parse semester {}, institute {}, group {} url {}'.format(task.semester, task.inst_name, task.group_name,
                                                                        task.url))
         schedule = {}
         for tr in grab.doc.select('//div[@id="stud"]/table/tr'):
