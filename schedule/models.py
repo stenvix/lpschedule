@@ -78,7 +78,8 @@ class Lesson(Base, db.Model):
 
         teacher = kwargs.get('teacher')
         if teacher is not None and teacher not in lesson.teachers:
-            lesson.teachers = teacher
+            lesson.teachers = []
+            lesson.teachers.append(teacher)
             changes = True
 
         active = kwargs.get('active')

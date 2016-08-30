@@ -4,7 +4,7 @@ from schedule.models import Time
 
 
 class TimeParser(Spider):
-    BASE = 'http://old.lp.edu.ua/node/45'
+    BASE = 'http://lp.edu.ua/poyasnennya-do-rozkladu'
     initial_urls = [BASE]
 
     def prepare(self):

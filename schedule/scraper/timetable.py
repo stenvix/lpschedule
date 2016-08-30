@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import datetime
 
 from sqlalchemy import and_
 from grab.spider import Spider, Task
@@ -21,7 +22,8 @@ logger = get_task_logger(__name__)
 class ScheduleParser(Spider):
     """ Site scraper for checking changes in base site. """
     # New site http://www.lp.edu.ua/rozklad-dlya-studentiv
-    BASE = 'http://old.lp.edu.ua/node/40'
+    # BASE = 'http://old.lp.edu.ua/node/40'
+    BASE = 'http://www.lp.edu.ua/rozklad-dlya-studentiv'
     initial_urls = [BASE]
 
     def prepare(self):
@@ -175,18 +177,19 @@ class ScheduleParser(Spider):
     def task_group(self, grab, task):
         logger.debug(u'{} in {}'.format(task.group_name, task.inst_name))
         self.save_group(task.group_name, task.url, Institute.get_by_attr(task.inst_name))
-        semestr = grab.doc.select('//select[@name="semestr"]/option[@selected]/@value')
+        semesters = grab.doc.select('//select[@name="semestr"]/option/@value')
         semestr_part = grab.doc.select('//select[@name="semest_part"]/option[@selected]/@value')
-        if (len(semestr) > 0 and len(semestr_part) > 0):
-            for sem in semestr:
-                for part in semestr_part:
-                    yield Task('parse', inst_name=task.inst_name,
-                               inst_attr=task.inst_attr, group_name=task.group_name, group_attr=task.group_attr,
-                               semestr=sem.text(), semestr_part=part.text(),
-                               url='{}?inst={}&group={}&semestr={}&semest_part={}'.format(ScheduleParser.BASE,
-                                                                                          task.inst_attr,
-                                                                                          task.group_attr, sem.text(),
-                                                                                          part.text()))
+        if (len(semesters) > 0 and len(semestr_part) > 0):
+            semester = self.get_semester(semesters)
+            for part in semestr_part:
+                yield Task('parse', inst_name=task.inst_name,
+                           inst_attr=task.inst_attr, group_name=task.group_name, group_attr=task.group_attr,
+                           semestr=semester, semestr_part=part.text(),
+                           url='{}?inst={}&group={}&semestr={}&semest_part={}'.format(ScheduleParser.BASE,
+                                                                                      task.inst_attr,
+                                                                                      task.group_attr,
+                                                                                      semester,
+                                                                                      part.text()))
 
     @classmethod
     def task_parse(self, grab, task):
@@ -215,3 +218,11 @@ class ScheduleParser(Spider):
             self.save_lesson(schedule, task)
         else:
             logger.info('Schedule is empty')
+
+    @classmethod
+    def get_semester(cls, semesters):
+        d = datetime.date.today()
+        if d.month >= 8 or d.month <= 12:
+            return semesters[0].text()
+        else:
+            return semesters[1].text()
