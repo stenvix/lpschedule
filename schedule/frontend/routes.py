@@ -64,7 +64,8 @@ def get_week(start=None):
 @frontend.route('/timetable/<int:group_id>')
 def timetable(group_id):
     logger.debug('%s [%s]', request.url, print_params(request.form))
-    group_lessons = Lesson.query.filter_by(group_id=group_id).order_by('lesson_number', 'day_number', 'subgroup').all()
+    group_lessons = Lesson.query.filter_by(
+        group_id=group_id, active=True).order_by('lesson_number', 'day_number', 'subgroup').all()
     if group_lessons is not None and len(group_lessons) > 0:
         lessons = []
         for week in range(0, 2):
