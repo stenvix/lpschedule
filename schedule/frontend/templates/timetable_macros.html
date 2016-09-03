@@ -16,7 +16,13 @@
                                 {% for subgroup in lesson %}
                                     {% set lol = lesson|length %}
                                     {% set lal = loop.last %}
-                                    <div class="mdl-cell  mdl-cell--12-col {% if lesson|length<2 and (subgroup.subgroup!=-1 and subgroup.subgroup!=0) %}mdl-cell--5-offset-desktop{% endif %} mdl-cell--5-col-desktop lesson">
+                                        <div class="mdl-cell  mdl-cell--12-col {% if
+                                        lesson|length==1 and subgroup.subgroup==-1 %}
+                                    mdl-cell--12-col-desktop {% else %} mdl-cell--5-col-desktop {%
+                                        endif %}{% if lesson|length == 1 and subgroup.subgroup==1
+                                    %}lesson_border--left mdl-cell--5-offset-desktop{% else
+                                    %}{% if subgroup.subgroup == 0 %}lesson_border--right{% endif
+                                    %}{% endif%} lesson">
                                         {% if subgroup.subgroup!=-1 %}
                                             <div class="subgroup">
                                                 {% if subgroup.subgroup%2==0 %}

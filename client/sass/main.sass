@@ -54,6 +54,7 @@
   display: flex
   align-items : center
   justify-content: center
+  font-weight: bold
 .lesson-container
   @extend .border-bottom
 
@@ -78,16 +79,15 @@
   border-left: 1px solid rgba(0,0,0,.1)
   .lesson
     @media screen and (max-width: 840px)
-      border-bottom: 1px solid rgba(0,0,0,.1)
-    @media screen and (min-width: 840px)
-      &:nth-child(2)
+        border-bottom: 1px solid rgba(0,0,0,.1)
+        &:last-child
+          border-bottom: none
+  .lesson_border--right
+      @media screen and (min-width: 840px)
+        border-right: 1px solid rgba(0,0,0,.1)
+  .lesson_border--left
+      @media screen and (min-width: 840px)
         border-left: 1px solid rgba(0,0,0,.1)
-  .mdl-cell--5-offset-desktop
-    @media screen and (min-width: 840px)
-      border-left: 1px solid rgba(0,0,0,.1)
-  div:last-child
-    border-bottom: none
-
 .ui-helper-hidden
     display: none
 
