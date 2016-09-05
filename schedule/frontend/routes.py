@@ -3,8 +3,9 @@
 import datetime
 import markdown
 import codecs
+import time
 
-from flask import render_template, abort, request, redirect, url_for, flash, Blueprint
+from flask import render_template, abort, request, redirect, url_for, flash, Blueprint, session
 from schedule.models import Group, Lesson
 from ..core import logger
 from ..helpers import print_params
@@ -15,6 +16,12 @@ frontend = Blueprint('frontend', __name__)
 def index():
     """Main view."""
     logger.debug('%s', request.url)
+    group_id = session.get('group_id')
+    last_req = session.get('last_req')
+    if last_req is not None:
+        last_req = time.time() - last_req
+    if group_id is not None and last_req > 60:
+        return redirect(url_for('frontend.timetable', group_id=group_id))
     return render_template('index.html')
 
 
@@ -64,6 +71,7 @@ def get_week(start=None):
 @frontend.route('/timetable/<int:group_id>')
 def timetable(group_id):
     logger.debug('%s [%s]', request.url, print_params(request.form))
+    session['last_req'] = time.time()
     group_lessons = Lesson.query.filter_by(
         group_id=group_id, active=True).order_by('lesson_number', 'day_number', 'subgroup').all()
     if group_lessons is not None and len(group_lessons) > 0:
@@ -84,7 +92,9 @@ def timetable(group_id):
                 if len(day) > 0:
                     weeks[day_number] = day
             lessons.append(weeks)
-        return render_template('timetable.html', lessons=lessons, week=get_week(), group=Group.query.get(group_id))
+        return render_template('timetable.html', lessons=lessons,
+                               week=get_week(),
+                               group=Group.query.get(group_id))
     else:
         abort(404)
 

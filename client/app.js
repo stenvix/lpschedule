@@ -111,6 +111,25 @@ $(document).ready(function () {
         })
     }
 
+    $('#favorite').on('click', function()
+        {
+            $.ajax({
+                url: '/api/favorite',
+                dataType: 'json',
+                data: {
+                    group_id: $('#favorite').data('group')
+                },
+                method: 'POST',
+                success: function(data){
+                    snackbarContainer.MaterialSnackbar.showSnackbar({message: "Групу запам’ятовано!"});
+                },
+                error: function(data){
+                    console.log(data)
+                    alert('Проблеми з’єднання з сервером')
+                }
+            }
+            )
+        });
     $('#institute').change(function (event) {
         getGroups($(event.target).val())
     });
@@ -118,7 +137,6 @@ $(document).ready(function () {
     $('#group').change(function (event) {
         location.href = '/timetable/' + $(event.target).val()
     });
-
 
     (function () {
         var dialogButton = document.querySelector('#list');

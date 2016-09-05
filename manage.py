@@ -23,4 +23,4 @@ def dropdb():
     db.drop_all(bind=None)
 
 if __name__ == '__main__':
-    manager.run()
+    manager.run(default_command='runserver')

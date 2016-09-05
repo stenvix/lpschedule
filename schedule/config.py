@@ -5,6 +5,7 @@ from celery.schedules import crontab
 
 DEBUG = False
 TESTING = True
+SECRET_KEY = '\xf5*\x84`\xe5\xc6\x95*/Xs\x1dg\xa4\xdbph\xa9\x9f\xdf\x9d\n\xf2x'
 LOGGER_NAME = 'schedule'
 FLASK_LOG_DIR = os.environ.get('OPENSHIFT_LOG_DOR', os.getcwd())
 PROPAGATE_EXCEPTIONS = True
