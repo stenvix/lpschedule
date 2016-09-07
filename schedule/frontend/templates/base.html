@@ -20,14 +20,14 @@
             <!-- Add spacer, to align navigation to the right -->
             <div class="mdl-layout-spacer"></div>
             <!-- Navigation. We hide it in small screens. -->
-            <nav class="mdl-navigation mdl-layout--large-screen-only">
+            <nav class="mdl-navigation ">
                 {% if group %}
                 <a href="#favorite" id="favorite" class="mdl-button mdl-js-button mdl-button--icon"
                                                   data-group="{{group.group_id}}">
                     <i class="material-icons">&#xE87E;</i>
                 </a>
                 {% endif %}
-                <a href="{{ url_for('frontend.how_to') }}" class="mdl-button mdl-js-button mdl-button--icon"> <i class="material-icons">&#xE8AF;</i></a>
+                <a href="{{ url_for('frontend.how_to') }}" class="mdl-layout--large-screen-only mdl-button mdl-js-button mdl-button--icon"> <i class="material-icons">&#xE8AF;</i></a>
             </nav>
         </div>
     </header>
