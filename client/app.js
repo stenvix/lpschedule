@@ -3,7 +3,7 @@
  */
 
 require("./sass/main.sass");
-require("./material.css");
+require("material-design-lite/material.css");
 require("dialog-polyfill/dialog-polyfill.css");
 require("./material.js");
 require("jquery.event.move");
@@ -121,7 +121,12 @@ $(document).ready(function () {
                 },
                 method: 'POST',
                 success: function(data){
-                    snackbarContainer.MaterialSnackbar.showSnackbar({message: "Групу запам’ятовано!"});
+                    if(data.data==='updated'){
+                        $('#favorite').children().text('favorite');
+                        snackbarContainer.MaterialSnackbar.showSnackbar({message: "Групу оновлено!"});
+                    }else{
+                        snackbarContainer.MaterialSnackbar.showSnackbar({message: "Групу запам’ятовано!"});
+                    }
                 },
                 error: function(data){
                     console.log(data)

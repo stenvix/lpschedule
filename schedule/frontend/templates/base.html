@@ -24,7 +24,7 @@
                 {% if group %}
                 <a href="#favorite" id="favorite" class="mdl-button mdl-js-button mdl-button--icon"
                                                   data-group="{{group.group_id}}">
-                    <i class="material-icons">&#xE87E;</i>
+                <i class="material-icons">{%if favorite %}&#xE87D; {% else %} &#xE87E;{% endif %}</i>
                 </a>
                 {% endif %}
                 <a href="{{ url_for('frontend.how_to') }}" class="mdl-layout--large-screen-only mdl-button mdl-js-button mdl-button--icon"> <i class="material-icons">&#xE8AF;</i></a>

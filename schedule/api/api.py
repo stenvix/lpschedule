@@ -13,8 +13,12 @@ def row2dict(row):
 
 @api.route('/favorite', methods=['POST'])
 def favorite():
-    if request.form.get('group_id'):
-        session['group_id'] = request.form.get('group_id')
+    active_group = session.get('group_id')
+    group = request.form.get('group_id')
+    if group is not None:
+        if active_group != group:
+            session['group_id'] = group
+            return jsonify(data='updated')
     return jsonify(data='done')
 
 
