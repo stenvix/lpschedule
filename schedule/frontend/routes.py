@@ -72,7 +72,10 @@ def get_week(start=None):
 def timetable(group_id):
     logger.debug('%s [%s]', request.url, print_params(request.form))
     session['last_req'] = time.time()
-    favorite = int(session.get('group_id')) == group_id
+    fgroup = session.get('group_id')
+    favorite = False
+    if fgroup is not None:
+        favorite = int(fgroup) == group_id
     group_lessons = Lesson.query.filter_by(
         group_id=group_id, active=True).order_by('lesson_number', 'day_number', 'subgroup').all()
     if group_lessons is not None and len(group_lessons) > 0:
