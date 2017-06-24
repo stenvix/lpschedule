@@ -145,7 +145,7 @@ class Teacher(Base, db.Model):
     teacher_id = db.Column(db.Integer, primary_key=True)
     teacher_name = db.Column(db.Unicode, unique=True)
     active = db.Column(db.Boolean, default=True)
-    lessons = db.relationship('Lesson', secondary='lesson_teacher', backref='teachers')
+    lessons = db.relationship('Lesson', secondary='lessonteacher', backref='teachers')
 
     @staticmethod
     def get_by_name(teacher_name):

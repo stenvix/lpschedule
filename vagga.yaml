@@ -1,8 +1,10 @@
 containers:
   schedule:
     setup:
-      - !Ubuntu trusty
-      - !Install [python,python-setuptools,libcurl4-openssl-dev,python-dev,build-essential,libxml2-dev,libxslt-dev,lib32z1-dev,libpq-dev]
+      - !Ubuntu xenial
+      - !UbuntuUniverse
+      - !Install [python,python-pip,python-setuptools,libcurl4-openssl-dev,python-dev,build-essential,libxml2-dev,libxslt-dev,lib32z1-dev,libpq-dev]
+      - !Sh 'pip install --upgrade setuptools'
       - !Sh 'python setup.py install'
     environ:
       DATABASE_URL: postgresql://vagga:vagga@127.0.0.1:5433/test?client_encoding=utf8
