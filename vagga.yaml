@@ -3,9 +3,9 @@ containers:
     setup:
       - !Ubuntu xenial
       - !UbuntuUniverse
-      - !Install [python,python-pip,python-setuptools,libcurl4-openssl-dev,python-dev,build-essential,libxml2-dev,libxslt-dev,lib32z1-dev,libpq-dev]
-      - !Sh 'pip install --upgrade setuptools'
-      - !Sh 'python setup.py install'
+      - !Install [python3,python3-pip,python3-setuptools,libcurl4-openssl-dev,python3-dev,build-essential,libxml2-dev,libxslt-dev,lib32z1-dev,libpq-dev]
+      - !Sh 'pip3 install --upgrade setuptools'
+      - !Sh 'python3 setup.py install'
     environ:
       DATABASE_URL: postgresql://vagga:vagga@127.0.0.1:5433/test?client_encoding=utf8
       PYTHON_EGG_CACHE: /tmp
@@ -37,7 +37,7 @@ commands:
             touch /work/.dbcreation; # Create lock file
             while [ -f /work/.dbcreation ]; do sleep 0.2; done # Acquire lock
             celery multi start worker1 -A schedule.tasks.celery -B -l debug -Ofair --logfile="celery.log";
-            python manage.py
+            python3 manage.py
       db: !Command
         container: database
         run: |
@@ -63,7 +63,7 @@ commands:
             touch /work/.dbcreation; # Create lock file
             while [ -f /work/.dbcreation ]; do sleep 0.2; done # Acquire lock
             celery multi start worker1 -A schedule.tasks.celery -B -l debug -Ofair --logfile="celery.log";
-            python app.py
+            python3 app.py
       db: !Command
         container: database
         run: |
