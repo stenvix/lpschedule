@@ -27,7 +27,7 @@
     "Lp",
     "Schedule"
   ],
-  "license": "ISC",
+  "license": "MIT",
   "main": "webpack.config.js",
   "name": "new-lpschedule",
   "repository": {
