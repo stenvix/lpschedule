@@ -25,7 +25,7 @@ $(document).ready(function () {
                     success: function (data) {
                         // Handle 'no match' indicated by [ "" ] response
                         response(
-                            $.map(data['data'], function (value, key) {
+                            $.map(data, function (value, key) {
                                 return {
                                     label: value.group_full_name,
                                     value: value.group_id
@@ -80,7 +80,7 @@ $(document).ready(function () {
             success: function (data) {
                 $('#group').empty();
                 var listitems = '<option disabled selected value> -- Виберіть групу -- </option>';
-                $.each(data.data, function (key, value) {
+                $.each(data, function (key, value) {
                     listitems += '<option value=' + value.group_id + '>' + value.group_full_name + '</option>';
                 });
                 $("#group").append(listitems)
@@ -100,7 +100,7 @@ $(document).ready(function () {
                 $('#institute').empty();
                 $("#group").empty();
                 var listitems = '<option disabled selected value> -- Виберіть інститут -- </option>';
-                $.each(data.data, function (key, value) {
+                $.each(data, function (key, value) {
                     listitems += '<option value=' + value.institute_id + '>' + value.institute_abbr + '</option>';
                 });
                 $("#institute").append(listitems)
@@ -121,7 +121,7 @@ $(document).ready(function () {
                 },
                 method: 'POST',
                 success: function(data){
-                    if(data.data==='updated'){
+                    if(data==='updated'){
                         $('#favorite').children().text('favorite');
                         snackbarContainer.MaterialSnackbar.showSnackbar({message: "Групу оновлено!"});
                     }else{

@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request, session
-from schedule.models import Group, Institute
+from schedule.models import Group, Institute, Lesson
 
 api = Blueprint('api', __name__)
 
@@ -19,7 +19,7 @@ def favorite():
         if active_group != group:
             session['group_id'] = group
             return jsonify(data='updated')
-    return jsonify(data='done')
+    return jsonify('done')
 
 
 @api.route('/group', methods=['GET'])
@@ -37,7 +37,7 @@ def group():
     data = []
     for i in all_groups:
         data.append(row2dict(i))
-    return jsonify(data=data)
+    return jsonify(data)
 
 
 @api.route('/institute', methods=['GET'])
@@ -48,4 +48,18 @@ def institute():
     for i in all_institutes:
         data.append(row2dict(i))
 
-    return jsonify(data=data)
+    return jsonify(data)
+
+@api.route('/timetable/<int:group_id>', methods=['GET'])
+def timetable(group_id):
+    group_lessons = Lesson.query.filter_by(
+        group_id=group_id, active=True).order_by('lesson_number', 'day_number', 'subgroup').all()
+    data = []
+    for i in group_lessons:
+        item = row2dict(i)
+        teachers = []
+        for t in i.teachers:
+            teachers.append(row2dict(t))
+        item['teachers'] = teachers
+        data.append(item)
+    return jsonify(data)
