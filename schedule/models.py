@@ -143,13 +143,15 @@ class Time(Base, db.Model):
 
 class Teacher(Base, db.Model):
     teacher_id = db.Column(db.Integer, primary_key=True)
-    teacher_name = db.Column(db.Unicode, unique=True)
+    teacher_name = db.Column(db.Unicode)
     active = db.Column(db.Boolean, default=True)
     lessons = db.relationship('Lesson', secondary='lessonteacher', backref='teachers')
+    institute_id = db.Column(db.Integer, db.ForeignKey('institute.institute_id'))
+    institute = db.relationship('Institute')
 
     @staticmethod
-    def get_by_name(teacher_name):
-        return Teacher.query.filter_by(teacher_name=teacher_name).first()
+    def get_by_name(teacher_name, institute):
+        return Teacher.query.filter_by(teacher_name=teacher_name, institute_id=institute.institute_id).first()
 
     @staticmethod
     def add(Teacher):

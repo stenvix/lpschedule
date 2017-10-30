@@ -54,7 +54,7 @@ class ScheduleParser(Spider):
                 for week_key, week in lesson.iteritems():
                     for subgroup in week:
                         if len(subgroup) > 0:
-                            teacher = self.save_teacher(subgroup['teacher'])
+                            teacher = self.save_teacher(subgroup['teacher'], Institute.get_by_attr(task.inst_name))
                             lesson_id = self.save_or_update_lesson(
                                 lesson_name=subgroup['name'],
                                 lesson_number=lesson_key,
@@ -78,12 +78,12 @@ class ScheduleParser(Spider):
             Lesson.deactivate(item)
 
     @classmethod
-    def save_teacher(self, teacher_name):
-        teacher = Teacher.get_by_name(teacher_name)
+    def save_teacher(self, teacher_name, institute):
+        teacher = Teacher.get_by_name(teacher_name, institute)
         if teacher:
             return teacher
         else:
-            return Teacher.add(Teacher(teacher_name=teacher_name))
+            return Teacher.add(Teacher(teacher_name=teacher_name, institute_id=institute.institute_id))
 
     @classmethod
     def save_or_update_lesson(self, **kwargs):

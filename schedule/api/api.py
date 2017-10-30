@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request, session
-from schedule.models import Group, Institute, Lesson
+from schedule.models import Group, Institute, Lesson, Teacher
 
 api = Blueprint('api', __name__)
 
@@ -22,14 +22,12 @@ def favorite():
     return jsonify('done')
 
 
-@api.route('/group', methods=['GET'])
-def group():
+@api.route('/institute/<int:institute_id>/groups', methods=['GET'])
+def group(institute_id):
     group_name = request.args.get('search')
-    params = request.args.get('institute_id')
-
-    if params is not None:
-        all_groups = Group.query.filter_by(institute_id=params).order_by('group_full_name').all()
-    if group_name:
+    if institute_id is not None:
+        all_groups = Group.query.filter_by(institute_id=institute_id).order_by('group_full_name').all()
+    elif group_name:
         group_name = group_name.upper()
         all_groups = Group.query.filter(
             Group.group_full_name.like(group_name + '%')
@@ -40,18 +38,26 @@ def group():
     return jsonify(data)
 
 
-@api.route('/institute', methods=['GET'])
+@api.route('/institute/<int:institute_id>/teachers', methods=['GET'])
+def teachers(institute_id):
+    teachers = Teacher.query.filter_by(institute_id = institute_id)
+    data = []
+    for i in teachers:
+        data.append(row2dict(i))
+    return jsonify(data)
+
+
+@api.route('/institutes', methods=['GET'])
 def institute():
     all_institutes = Institute.query.all()
     data = []
-
     for i in all_institutes:
         data.append(row2dict(i))
-
     return jsonify(data)
 
-@api.route('/timetable/<int:group_id>', methods=['GET'])
-def timetable(group_id):
+
+@api.route('/timetable/group/<int:group_id>', methods=['GET'])
+def group_timetable(group_id):
     group_lessons = Lesson.query.filter_by(
         group_id=group_id, active=True).order_by('lesson_number', 'day_number', 'subgroup').all()
     data = []
@@ -62,4 +68,16 @@ def timetable(group_id):
             teachers.append(row2dict(t))
         item['teachers'] = teachers
         data.append(item)
+    return jsonify(data)
+
+
+@api.route('/timetable/teacher/<int:teacher_id>', methods=['GET'])
+def teacher_timetable(teacher_id):
+    teacher = Teacher.query.filter_by(teacher_id=teacher_id).first()
+    data = []
+    for i in teacher.lessons:
+        if(i.active == True):
+            item = row2dict(i)
+            item['teachers'] = row2dict(teacher)
+            data.append(item)
     return jsonify(data)
