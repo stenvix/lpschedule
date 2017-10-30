@@ -21,6 +21,20 @@ def favorite():
             return jsonify(data='updated')
     return jsonify('done')
 
+@api.route('/group', methods=['GET'])
+def group():
+    group_name = request.args.get('search')
+
+    if group_name:
+        group_name = group_name.upper()
+        all_groups = Group.query.filter(
+            Group.group_full_name.like(group_name + '%')
+        ).order_by('group_full_name').all()
+        data = []
+        for i in all_groups:
+            data.append(row2dict(i))
+        return jsonify(data)
+
 
 @api.route('/institute/<int:institute_id>/groups', methods=['GET'])
 def group(institute_id):

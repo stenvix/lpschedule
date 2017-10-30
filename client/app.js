@@ -71,12 +71,9 @@ $(document).ready(function () {
     }
     function getGroups(institute_id) {
         $.ajax({
-            url: '/api/group',
+            url: '/api/'+institute_id+'/group',
             dataType: "json",
             method: "GET",
-            data: {
-                institute_id: institute_id
-            },
             success: function (data) {
                 $('#group').empty();
                 var listitems = '<option disabled selected value> -- Виберіть групу -- </option>';
@@ -93,7 +90,7 @@ $(document).ready(function () {
 
     function getInstitutes() {
         $.ajax({
-            url: '/api/institute',
+            url: '/api/institutes',
             dataType: "json",
             method: "GET",
             success: function (data) {
@@ -140,7 +137,7 @@ $(document).ready(function () {
     });
 
     $('#group').change(function (event) {
-        location.href = '/timetable/' + $(event.target).val()
+        location.href = '/timetable/group/' + $(event.target).val()
     });
 
     (function () {
