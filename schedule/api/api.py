@@ -22,7 +22,7 @@ def favorite():
     return jsonify('done')
 
 @api.route('/group', methods=['GET'])
-def group():
+def group_search():
     group_name = request.args.get('search')
 
     if group_name:
