@@ -5,6 +5,10 @@
             <div class="mdl-card mdl-shadow--6dp search-card">
                 <form action="{{ url_for('frontend.search') }}" method="post">
                     <div class="mdl-card__supporting-text">
+                                <select id="criteria" >
+                                <option selected value="group">Група</option>
+                                <option value="teacher">Викладач</option>
+                            </select>
                         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                             <input class="mdl-textfield__input" type="text" id="search" name="data"/>
                             <label class="mdl-textfield__label" for="search">Введіть групу</label>

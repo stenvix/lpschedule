@@ -28,13 +28,25 @@ def group_search():
     if group_name:
         group_name = group_name.upper()
         all_groups = Group.query.filter(
-            Group.group_full_name.like(group_name + '%')
+            Group.group_full_name.ilike('%'+ group_name + '%')
         ).order_by('group_full_name').all()
         data = []
         for i in all_groups:
             data.append(row2dict(i))
         return jsonify(data)
 
+@api.route('/teacher', methods=['GET'])
+def teacher_search():
+    teacher_name = request.args.get('search')
+    if teacher_name:
+        teacher_name = teacher_name.lower()
+        teachers = Teacher.query.filter(Teacher.teacher_name.ilike('%'+teacher_name+'%')).order_by('teacher_name').all()
+        data = []
+        for i  in teachers:
+            item = row2dict(i)
+            item['institute'] = row2dict(i.institute)
+            data.append(item)
+        return jsonify(data)
 
 @api.route('/institute/<int:institute_id>/groups', methods=['GET'])
 def group(institute_id):
@@ -89,9 +101,11 @@ def group_timetable(group_id):
 def teacher_timetable(teacher_id):
     teacher = Teacher.query.filter_by(teacher_id=teacher_id).first()
     data = []
-    for i in teacher.lessons:
-        if(i.active == True):
-            item = row2dict(i)
-            item['teachers'] = row2dict(teacher)
-            data.append(item)
+    if(teacher is not None):
+        for i in teacher.lessons:
+            if(i.active == True):
+                item = row2dict(i)
+                item['teachers'] = row2dict(teacher)
+                item['group'] = row2dict(i.group)
+                data.append(item)
     return jsonify(data)

@@ -13,11 +13,23 @@ var Swiper = require("./swiper.jquery.js");
 var dialogPolyfill = require("dialog-polyfill/dialog-polyfill.js");
 
 $(document).ready(function () {
+    function getCriteria() {
+        return $('#criteria').val();
+    }
+
+    function getUrl() {
+        if (getCriteria() === 'group') {
+            return '/api/group'
+        } else {
+            return '/api/teacher'
+        }
+    }
+
     $(function () {
         $("#search").autocomplete({
             source: function (request, response) {
                 $.ajax({
-                    url: "/api/group",
+                    url: getUrl(),
                     dataType: "json",
                     data: {
                         search: request.term
@@ -26,9 +38,16 @@ $(document).ready(function () {
                         // Handle 'no match' indicated by [ "" ] response
                         response(
                             $.map(data, function (value, key) {
-                                return {
-                                    label: value.group_full_name,
-                                    value: value.group_id
+                                if (getCriteria() === 'group') {
+                                    return {
+                                        label: value.group_full_name,
+                                        value: value.group_id
+                                    }
+                                } else {
+                                    return {
+                                        label: value.teacher_name + '[' + value.institute.institute_abbr + ']',
+                                        value: value.teacher_id
+                                    }
                                 }
                             })
                         );
@@ -38,40 +57,41 @@ $(document).ready(function () {
             minLength: 2,
             select: function (event, ui) {
                 $("#search").val(ui.item.label);
-                location.href = '/timetable/' + ui.item.value;
+                location.href = '/timetable/' + getCriteria() + '/' + ui.item.value;
                 return false;
             }
         });
     });
     var snackbarContainer = document.querySelector("#messages");
     var initialSlide = 0;
-    $(".mdl-tabs__tab").each(function (key, value){
-        if($(value).hasClass('is-active')){
+    $(".mdl-tabs__tab").each(function (key, value) {
+        if ($(value).hasClass('is-active')) {
             initialSlide = key;
         }
     })
     //initialize swiper when document ready  and element is exist
-    if($(".swiper-container").length > 0){
-        var mySwiper = new Swiper ('.swiper-container', {
-          // Optional parameters
-          initialSlide: initialSlide,
-          direction: 'horizontal',
-          loop: false,
-          prevButton: '#week-one',
-          nextButton: '#week-two'
+    if ($(".swiper-container").length > 0) {
+        var mySwiper = new Swiper('.swiper-container', {
+            // Optional parameters
+            initialSlide: initialSlide,
+            direction: 'horizontal',
+            loop: false,
+            prevButton: '#week-one',
+            nextButton: '#week-two'
         })
         mySwiper.on('slideChangeStart', function () {
-        $(".mdl-tabs__tab").each(function (key, value) {
-                if(mySwiper.activeIndex == key){
+            $(".mdl-tabs__tab").each(function (key, value) {
+                if (mySwiper.activeIndex == key) {
                     snackbarContainer.MaterialSnackbar.showSnackbar({message: $(value).text()});
                 }
                 $(value).toggleClass("is-active");
             });
         });
     }
+
     function getGroups(institute_id) {
         $.ajax({
-            url: '/api/'+institute_id+'/group',
+            url: '/api/institute/' + institute_id + '/groups',
             dataType: "json",
             method: "GET",
             success: function (data) {
@@ -108,30 +128,29 @@ $(document).ready(function () {
         })
     }
 
-    $('#favorite').on('click', function()
-        {
-            $.ajax({
+    $('#favorite').on('click', function () {
+        $.ajax({
                 url: '/api/favorite',
                 dataType: 'json',
                 data: {
                     group_id: $('#favorite').data('group')
                 },
                 method: 'POST',
-                success: function(data){
-                    if(data==='updated'){
+                success: function (data) {
+                    if (data === 'updated') {
                         $('#favorite').children().text('favorite');
                         snackbarContainer.MaterialSnackbar.showSnackbar({message: "Групу оновлено!"});
-                    }else{
+                    } else {
                         snackbarContainer.MaterialSnackbar.showSnackbar({message: "Групу запам’ятовано!"});
                     }
                 },
-                error: function(data){
+                error: function (data) {
                     console.log(data)
                     alert('Проблеми з’єднання з сервером')
                 }
             }
-            )
-        });
+        )
+    });
     $('#institute').change(function (event) {
         getGroups($(event.target).val())
     });
@@ -143,11 +162,11 @@ $(document).ready(function () {
     (function () {
         var dialogButton = document.querySelector('#list');
         var dialog = document.querySelector('#dialog');
-        if(dialog){
+        if (dialog) {
             if (!dialog.showModal) {
                 dialogPolyfill.registerDialog(dialog);
             }
-            if(dialogButton){
+            if (dialogButton) {
                 dialogButton.addEventListener('click', function () {
                     dialog.showModal();
                     getInstitutes();

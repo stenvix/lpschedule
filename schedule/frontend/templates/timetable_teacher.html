@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %} &ndash; {{ teacher.teacher_name }}{% endblock %}
+{% block content %}
+    {% import 'timetable_macros.html' as temp %}
+    <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect swiper-container"  id="timetable">
+        <div class="mdl-tabs__tab-bar">
+            <a id="week-one" class="mdl-tabs__tab {% if week== 1 %}is-active {% endif %}">Перший тиждень</a>
+            <a id="week-two" class="mdl-tabs__tab {% if week== 2 %}is-active {% endif %}">Другий тиждень</a>
+        </div>
+        <div class="swiper-wrapper">
+            <div class="mdl-tabs__panel swiper-slide is-active {% if week== 1 %}is-active {% endif %}" id="week-one">
+                {{ temp.week(lessons[0],0,day_to_string) }}
+            </div>
+            <div class="mdl-tabs__panel swiper-slide is-active {% if week== 2 %}is-active {% endif %}" id="week-two">
+                {{ temp.week(lessons[1],1,day_to_string) }}
+            </div>
+        </div>
+    </div>
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/swiper.min.css')}}">
+    <script type="text/javascript" src="{{url_for('static', filename='js/swiper.jquery.min.js')}}"></script>
+    <div id="messages" class="mdl-js-snackbar mdl-snackbar">
+    <div class="mdl-snackbar__text" style="margin: 0 auto"></div>
+        <button class="mdl-snackbar__action" type="button"></button>
+    </div>
+{% endblock %}
