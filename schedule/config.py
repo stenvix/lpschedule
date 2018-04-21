@@ -17,9 +17,9 @@ HOST_NAME = os.environ.get(
 APP_NAME = os.environ.get(
     'OPENSHIFT_APP_NAME', 'flask')
 IP = os.environ.get('OPENSHIFT_PYTHON_IP', '0.0.0.0')
-PORT = int(os.environ.get('OPENSHIFT_PYTHON_PORT', 5000))
+PORT = int(os.environ.get('OPENSHIFT_PYTHON_PORT', 80))
 SQLALCHEMY_DATABASE_URI = os.environ.get(
-    'OPENSHIFT_POSTGRESQL_DB_URL', 'postgresql://vagga:vagga@127.0.0.1:5433/test?client_encoding=utf8')
+    'DATABASE_URL', 'postgresql://vagga:vagga@127.0.0.1:5433/test?client_encoding=utf8')
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 SCRAPER_SCHEDULE_URL = 'http://old.lp.edu.ua/node/40'
 SCRAPER_TIME_URL = 'http://old.lp.edu.ua/node/45'
