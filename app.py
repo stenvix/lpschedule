@@ -6,7 +6,7 @@ import sys
 from werkzeug.wsgi import DispatcherMiddleware
 from schedule import frontend, api
 
- application = DispatcherMiddleware(frontend.create_app(), {
+application = DispatcherMiddleware(frontend.create_app(), {
         '/api': api.create_app()
     })
 
