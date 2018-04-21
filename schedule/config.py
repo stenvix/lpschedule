@@ -19,17 +19,17 @@ APP_NAME = os.environ.get(
 IP = os.environ.get('OPENSHIFT_PYTHON_IP', '0.0.0.0')
 PORT = int(os.environ.get('OPENSHIFT_PYTHON_PORT', 80))
 SQLALCHEMY_DATABASE_URI = os.environ.get(
-    'DATABASE_URL', 'postgresql://vagga:vagga@127.0.0.1:5433/test?client_encoding=utf8')
+    'DATABASE_URL', 'postgres://nnsdeofqutllyo:151bbe792f6eb4395af9cedf93971fbd4ab86a2b368c15ec53f70203f5b13634@ec2-54-247-81-88.eu-west-1.compute.amazonaws.com:5432/d7trb6uv8oke4j?client_encoding=utf8')
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 SCRAPER_SCHEDULE_URL = 'http://old.lp.edu.ua/node/40'
 SCRAPER_TIME_URL = 'http://old.lp.edu.ua/node/45'
 CELERY = {
     'CELERY_BROKER_URL': 'sqla+' + os.environ.get(
         'OPENSHIFT_POSTGRESQL_DB_URL',
-        'postgresql://vagga:vagga@127.0.0.1:5433/test?client_encoding=utf8'),
+        'postgres://nnsdeofqutllyo:151bbe792f6eb4395af9cedf93971fbd4ab86a2b368c15ec53f70203f5b13634@ec2-54-247-81-88.eu-west-1.compute.amazonaws.com:5432/d7trb6uv8oke4j?client_encoding=utf8'),
     'CELERY_RESULT_BACKEND': 'db+' + os.environ.get(
         'OPENSHIFT_POSTGRESQL_DB_URL',
-        'postgresql://vagga:vagga@127.0.0.1:5433/test?client_encoding=utf8'),
+        'postgres://nnsdeofqutllyo:151bbe792f6eb4395af9cedf93971fbd4ab86a2b368c15ec53f70203f5b13634@ec2-54-247-81-88.eu-west-1.compute.amazonaws.com:5432/d7trb6uv8oke4j?client_encoding=utf8'),
     'CELERY_TIMEZONE': 'Europe/Kiev',
     'CELERY_ENABLE_UTC': True,
     'CELERYBEAT_SCHEDULE': {
