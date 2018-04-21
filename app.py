@@ -6,6 +6,9 @@ import sys
 from werkzeug.wsgi import DispatcherMiddleware
 from schedule import frontend, api
 
+ application = DispatcherMiddleware(frontend.create_app(), {
+        '/api': api.create_app()
+    })
 
 # def gunicorn(app, host, port, workers):
 #     """Start the Server with Gunicorn."""
@@ -48,7 +51,4 @@ from schedule import frontend, api
 #         gunicorn(app, server_ip, port, workers=1)
 
 if __name__ == '__main__':
-    application = DispatcherMiddleware(frontend.create_app(), {
-        '/api': api.create_app()
-    })
     application.run();
