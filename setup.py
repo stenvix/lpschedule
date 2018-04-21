@@ -17,5 +17,5 @@ setup(name='LpSchedule',
           'grab>=0.6.30',
           'psycopg2>=2.5.1',
           'markdown>=2.6.6',
-          'celery==3.1.23'
+          'celery==4.1.0'
       ],)
