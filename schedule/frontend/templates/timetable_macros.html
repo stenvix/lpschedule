@@ -1,6 +1,6 @@
 {% macro week(lessons_list, week_number,day_to_string) -%}
     <div class="mdl-grid ">
-        {% for day_number,days in lessons_list.iteritems() %}
+        {% for day_number,days in lessons_list.items() %}
             <div class="mdl-cell mdl-cell--8-col mdl-cell--2-offset-desktop  mdl-cell--12-col-tablet mdl-shadow--2dp mdl-cell--top">
                 <div class="mdl-grid lesson-header">
                     <div class="mdl-cell mdl-cell--1-col">Пара</div>
