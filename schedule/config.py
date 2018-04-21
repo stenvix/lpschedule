@@ -35,7 +35,7 @@ CELERY = {
     'CELERYBEAT_SCHEDULE': {
         'every-day': {
             'task': 'schedule.parse',
-            'schedule': crontab(minute='*/5')
+            'schedule': crontab(minute='0', hour='*/12')
         }
     }
 }
